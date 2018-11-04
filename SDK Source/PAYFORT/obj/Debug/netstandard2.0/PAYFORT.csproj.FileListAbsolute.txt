@@ -1,0 +1,8 @@
+C:\Users\hanann\Desktop\diaa\PAYFORT\PAYFORT\bin\Debug\netstandard2.0\PAYFORT.SDK.deps.json
+C:\Users\hanann\Desktop\diaa\PAYFORT\PAYFORT\bin\Debug\netstandard2.0\PAYFORT.SDK.dll
+C:\Users\hanann\Desktop\diaa\PAYFORT\PAYFORT\bin\Debug\netstandard2.0\PAYFORT.SDK.pdb
+C:\Users\hanann\Desktop\diaa\PAYFORT\PAYFORT\obj\Debug\netstandard2.0\PAYFORT.csproj.CoreCompileInputs.cache
+C:\Users\hanann\Desktop\diaa\PAYFORT\PAYFORT\obj\Debug\netstandard2.0\PAYFORT.AssemblyInfoInputs.cache
+C:\Users\hanann\Desktop\diaa\PAYFORT\PAYFORT\obj\Debug\netstandard2.0\PAYFORT.AssemblyInfo.cs
+C:\Users\hanann\Desktop\diaa\PAYFORT\PAYFORT\obj\Debug\netstandard2.0\PAYFORT.SDK.dll
+C:\Users\hanann\Desktop\diaa\PAYFORT\PAYFORT\obj\Debug\netstandard2.0\PAYFORT.SDK.pdb

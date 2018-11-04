@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>PAYFORT.SDK</AssemblyName>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>PayfortDotNetSDK.pfx</AssemblyOriginatorKeyFile>
+    <DelaySign>false</DelaySign>
+    <Description>This is Payfort .NET SDK</Description>
+    <Copyright>Payfort</Copyright>
+  </PropertyGroup>
+
+</Project>
