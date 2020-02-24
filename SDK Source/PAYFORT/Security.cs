@@ -32,10 +32,28 @@ namespace PAYFORT
         }
         internal static string generate_signature(string[] FORTRequestParameters)
         {
-
+           
 
             FORTRequestParameters = PayFortConfig.AddConfigToParameters(FORTRequestParameters);
 
+
+           int isRememberMe=-1;
+           int isTokenization=-1;
+           for (int i = 0; i < FORTRequestParameters.Length; i++)
+           {
+              if(FORTRequestParameters[i].IndexOf("remember_me")){
+              isRememberMe=i;
+              }
+              if(FORTRequestParameters[i].IndexOf("TOKENIZATION")){
+              isTokenization=i;
+              }
+              
+           }
+             
+           if(isRememberMe !=-1 && isTokenization !=-1){
+              FORTRequestParameters[isRememberMe]="";
+           }
+           
             string signature = "";
             for (int i = 0; i < FORTRequestParameters.Length; i++)
             {
