@@ -41,10 +41,10 @@ namespace PAYFORT
            int isTokenization=-1;
            for (int i = 0; i < FORTRequestParameters.Length; i++)
            {
-              if(FORTRequestParameters[i].IndexOf("remember_me")){
+              if(FORTRequestParameters[i].IndexOf("remember_me") != -1 ){
               isRememberMe=i;
               }
-              if(FORTRequestParameters[i].IndexOf("TOKENIZATION")){
+              if(FORTRequestParameters[i].IndexOf("TOKENIZATION") != -1 ){
               isTokenization=i;
               }
               
