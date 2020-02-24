@@ -40,7 +40,7 @@ namespace PAYFORT
             for (int i = 0; i < FORTRequestParameters.Length; i++)
             {
                 string par = FORTRequestParameters[i];
-                if    (   par.IndexOf("signature")!=-1 ||    par.IndexOf(  "card_security_code") != -1 || par.IndexOf("card_number") != -1 || par.IndexOf("expiry_date") != -1 || par.IndexOf("card_holder_name") != -1 || par.IndexOf("remember_me") != -1)
+                if    (   par.IndexOf("signature")!=-1 ||    par.IndexOf(  "card_security_code") != -1 || par.IndexOf("card_number") != -1 || par.IndexOf("expiry_date") != -1 || par.IndexOf("card_holder_name") != -1 )
                 {
                     FORTRequestParameters[i] = "";
                 }
