@@ -2,7 +2,7 @@
 
 This SDK provides various API functions to manage PayFort requests, responses and some helpful functions that developers can use in order to decrease  the time  of integration process.
 
-This SDK is currently support **Marchant Page 2.0**, All Payfort services  will be available as soon as possible.
+This SDK is currently support **Merchant Page 2.0**( **Custom Merchant Page** ), All Payfort services  will be available as soon as possible.
 For any inquery or Questions, Please feel free to contact us
 
 
