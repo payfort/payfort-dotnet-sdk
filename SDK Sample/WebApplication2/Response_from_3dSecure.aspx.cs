@@ -34,11 +34,12 @@ namespace WebApplication2
             setConfig();
             // getting Payfort Response from 3-D secure URL
             //validate the Response
-            Boolean valid_request = PAYFORT.Security.ValidateSignature(PAYFORT.Command.GetPAYFORTResponse(Request.QueryString));
+            Boolean valid_request = PAYFORT.Security.ValidateSignature(PAYFORT.Command.GetPAYFORTResponse(Request.Form));
+
             if (valid_request)
             {
 
-                    Response.Write(Request.QueryString["response_message"].ToString());
+                    Response.Write(Request.Form["response_message"].ToString());
             }
             else
             {

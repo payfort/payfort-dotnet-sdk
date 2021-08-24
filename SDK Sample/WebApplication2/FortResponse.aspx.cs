@@ -46,7 +46,8 @@ namespace WebApplication2
             // This function is get the response came from "redirect request" you just made.
             // basicly, its reading the QyeryStrings from httpsRequest and organize them is string[]
             //This is for testing purpose, in real live websites, you should get Payfort response from your "Notification URL" not "returnURL".
-            string[] payfort_res = PAYFORT.Command.GetPAYFORTResponse(Request.QueryString);
+            string[] payfort_res = PAYFORT.Command.GetPAYFORTResponse(Request.Form);
+
             //Validate Payfort Reponse
             //you can pass string[],ArrayList or JSON to this function 
             Boolean valid_request = PAYFORT.Security.ValidateSignature(payfort_res);
@@ -76,11 +77,11 @@ namespace WebApplication2
                     ArrayList trans = new ArrayList
                     {
                         "command=PURCHASE",
-                        "merchant_reference="+Request.QueryString["merchant_reference"].ToString(),
+                        "merchant_reference="+Request.Form["merchant_reference"].ToString(),
                         "amount=500000",
-                        "currency=SAR",
+                        "currency=AED",
                         "customer_email=diaa@gmail.com",
-                        "token_name="+Request.QueryString["token_name"].ToString(),
+                        "token_name="+Request.Form["token_name"].ToString(),
                         "return_url=http://localhost:65379/Response_from_3dSecure.aspx",
                         "customer_ip=192.178.1.10"
                     };
@@ -123,7 +124,7 @@ namespace WebApplication2
                 }
                 else {
                     //the response came from payfort is valid, but has some error.[ex: missing parameters]
-                    Response.Write("Error:" + Request.QueryString["response_message"].ToString());
+                    Response.Write("Error:" + Request.Form["response_message"].ToString());
                 }
             }
             else {
