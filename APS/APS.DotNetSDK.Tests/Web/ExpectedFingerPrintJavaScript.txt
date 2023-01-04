@@ -1,0 +1,8 @@
+<script type="text/javascript">
+var io_bbout_element_id = 'device_fingerprint';//the input id will be used to collect the device fingerprint value
+var io_install_stm = false;
+var io_exclude_stm = 0;//prevent the iovation Active X control from running on either Windows
+var io_install_flash = false;
+var io_enable_rip = true;// collect real ip information
+</script>
+<script type="text/javascript" src="https://mpsnare.iesnare.com/snare.js"></script>

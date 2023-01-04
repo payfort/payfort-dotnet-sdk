@@ -1,0 +1,14 @@
+﻿
+<div id="iframeDiv" class="text-center">
+    <h1>Standard checkout</h1>
+    @Html.Raw(ViewBag.FormPost)
+</div>
+
+<div id="responseDiv">
+    <p id="p1"></p>
+</div>
+
+@if (Model)
+{
+    @Html.Raw(ViewBag.CloseIframe)
+}

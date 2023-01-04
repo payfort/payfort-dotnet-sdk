@@ -1,0 +1,18 @@
+﻿@using Microsoft.AspNetCore.Html
+@{
+    ViewData["Title"] = "Home Page";
+}
+@model bool;
+
+@if (Model)
+{
+    <script>
+        window.parent.document.getElementById("p1").innerHTML = "@ViewBag.Response";
+
+        var myModal = window.parent.document.getElementById('myModal');
+        if (!(myModal.length == 0)) {
+            myModal.style.display = "none";
+        }
+
+    </script>
+}

@@ -1,0 +1,42 @@
+{
+  "Environments": [
+    {
+      "Name": "Test",
+      "MaintenanceOperations": {
+        "BaseUrl": "https://sbpaymentservices.payfort.com",
+        "RequestUri": "/FortAPI/paymentApi"
+      },
+      "RedirectUrl": "https://sbcheckout.payfort.com/FortAPI/paymentPage",
+      "StandardCheckoutActionUrl": "https://sbcheckout.payfort.com/FortAPI/paymentPage",
+      "CustomCheckoutActionUrl": "https://sbcheckout.PayFort.com/FortAPI/paymentPage",
+      "Installments": {
+        "BaseUrl": "https://sbpaymentservices.payfort.com",
+        "RequestUri": "/FortAPI/paymentApi"
+      }
+    },
+    {
+      "Name": "Production",
+      "MaintenanceOperations": {
+        "BaseUrl": "https://paymentservices.payfort.com",
+        "RequestUri": "/FortAPI/paymentApi"
+      },
+      "RedirectUrl": "https://checkout.payfort.com/FortAPI/paymentPage",
+      "StandardCheckoutActionUrl": "https://checkout.payfort.com/FortAPI/paymentPage",
+      "CustomCheckoutActionUrl": "https://checkout.PayFort.com/FortAPI/paymentPage",
+      "Installments": {
+        "BaseUrl": "https://paymentservices.payfort.com",
+        "RequestUri": "/FortAPI/paymentApi"
+      }
+    }
+  ],
+  "ApplePaySessionRetrieval": {
+    "sslProtocol": "Tls12",
+    "initiative": "web",
+    "initiativeContext": "com.amazonpaymentservices.test"
+  },
+  "RedirectFormTemplate": "<form action='{0}' method='post' name='redirectToApsForm'><br>{1}</form>",
+  "StandardFormTemplate": "<iframe name='apsFrame' src='' width='600' height='440'></iframe><br><form action='{0}' method='post' id='apsIframeForm' target='apsFrame'><br>{1}<input value='Place Order' type='submit' id='apsIframeForm'></form>",
+  "CustomFormTemplate": "<form action='{0}' method='post' name='redirectToApsForm'><br>{1}<br>{2}<input value='Place Order' type='submit' id='redirectToApsForm'></form>",
+  "CloseModalJavaScript": "<script>var myModal = window.parent.document.getElementById('myModal'); if (!(myModal == null)) { myModal.style.display = 'none';}</script>",
+  "CloseIframeJavaScript": "<script>var iframe = window.parent.document.getElementById('iframeDiv');if (!(iframe == null)) { iframe.innerHTML = '';}</script>"
+}

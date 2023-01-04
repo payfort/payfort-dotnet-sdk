@@ -1,0 +1,431 @@
+{
+  "AcquirerResponseMapping": [
+    {
+      "acquirer_response_code" : "57",
+      "acquirer_response_description" : "Transaction not permitted to card holder"
+    },
+    {
+      "acquirer_response_code" : "41",
+      "acquirer_response_description" : "Lost card"
+    },
+    {
+      "acquirer_response_code" : "70",
+      "acquirer_response_description" : "Reserved for ISO use"
+    },
+    {
+      "acquirer_response_code" : "55",
+      "acquirer_response_description" : "Incorrect PIN"
+    },
+    {
+      "acquirer_response_code" : "902",
+      "acquirer_response_description" : "Technical Error"
+    },
+    {
+      "acquirer_response_code" : "94",
+      "acquirer_response_description" : "Duplicate transmission"
+    },
+    {
+      "acquirer_response_code" : "79",
+      "acquirer_response_description" : "Reserved for Private use"
+    },
+    {
+      "acquirer_response_code" : "58",
+      "acquirer_response_description" : "Transaction not permitted to terminal"
+    },
+    {
+      "acquirer_response_code" : "83",
+      "acquirer_response_description" : "Card issuer suspects fraud"
+    },
+    {
+      "acquirer_response_code" : "51",
+      "acquirer_response_description" : "Insufficient funds"
+    },
+    {
+      "acquirer_response_code" : "12",
+      "acquirer_response_description" : "Invalid Transaction"
+    },
+    {
+      "acquirer_response_code" : "203",
+      "acquirer_response_description" : "General decline of the card"
+    },
+    {
+      "acquirer_response_code" : "211",
+      "acquirer_response_description" : "Invalid CVN"
+    },
+    {
+      "acquirer_response_code" : "109",
+      "acquirer_response_description" : "INVALID_PRODUCT_DETAIL"
+    },
+    {
+      "acquirer_response_code" : "102",
+      "acquirer_response_description" : "One or more fields in the request contains invalid data"
+    },
+    {
+      "acquirer_response_code" : "231",
+      "acquirer_response_description" : "Invalid account number"
+    },
+    {
+      "acquirer_response_code" : "115",
+      "acquirer_response_description" : "INVALID_SESSION"
+    },
+    {
+      "acquirer_response_code" : "233",
+      "acquirer_response_description" : "General decline by the processor"
+    },
+    {
+      "acquirer_response_code" : "ERR_102",
+      "acquirer_response_description" : "PERMISSION_FAIL"
+    },
+    {
+      "acquirer_response_code" : "ERR_119",
+      "acquirer_response_description" : "INVALID_PURCHASE_REQUEST"
+    },
+    {
+      "acquirer_response_code" : "150",
+      "acquirer_response_description" : "General system failure"
+    },
+    {
+      "acquirer_response_code" : "E999999",
+      "acquirer_response_description" : "Transaction can not be processed at this moment"
+    },
+    {
+      "acquirer_response_code" : "2996",
+      "acquirer_response_description" : "Cancelled before payment method selection"
+    },
+    {
+      "acquirer_response_code" : "FAILURE(SUSPECT)",
+      "acquirer_response_description" : "Failed; suspect"
+    },
+    {
+      "acquirer_response_code" : "9001",
+      "acquirer_response_description" : "Payment failed"
+    },
+    {
+      "acquirer_response_code" : "8400",
+      "acquirer_response_description" : "One Time Password abnormal error"
+    },
+    {
+      "acquirer_response_code" : "401",
+      "acquirer_response_description" : "Call Issuer"
+    },
+    {
+      "acquirer_response_code" : "E019004",
+      "acquirer_response_description" : "N\/A"
+    },
+    {
+      "acquirer_response_code" : "110",
+      "acquirer_response_description" : "INVALID_ORDERID"
+    },
+    {
+      "acquirer_response_code" : "63",
+      "acquirer_response_description" : "Security violation"
+    },
+    {
+      "acquirer_response_code" : "12",
+      "acquirer_response_description" : "Invalid transaction"
+    },
+    {
+      "acquirer_response_code" : "900",
+      "acquirer_response_description" : "Invalid Terminal Channel"
+    },
+    {
+      "acquirer_response_code" : "61",
+      "acquirer_response_description" : "Exceeds withdrawal amount limits"
+    },
+    {
+      "acquirer_response_code" : "92",
+      "acquirer_response_description" : "Financial Institution or intermediate network facility cannot be found for routing"
+    },
+    {
+      "acquirer_response_code" : "14",
+      "acquirer_response_description" : "Invalid card number"
+    },
+    {
+      "acquirer_response_code" : "59",
+      "acquirer_response_description" : "Suspected fraud"
+    },
+    {
+      "acquirer_response_code" : "79",
+      "acquirer_response_description" : "Invalid digital signature"
+    },
+    {
+      "acquirer_response_code" : "83",
+      "acquirer_response_description" : "Reserved for Private use"
+    },
+    {
+      "acquirer_response_code" : "82",
+      "acquirer_response_description" : "Count exceeds limit"
+    },
+    {
+      "acquirer_response_code" : "05",
+      "acquirer_response_description" : "Do not honor"
+    },
+    {
+      "acquirer_response_code" : "80",
+      "acquirer_response_description" : "Reserved for Private use"
+    },
+    {
+      "acquirer_response_code" : "03",
+      "acquirer_response_description" : "Invalid merchant"
+    },
+    {
+      "acquirer_response_code" : "82",
+      "acquirer_response_description" : "Reserved for Private use"
+    },
+    {
+      "acquirer_response_code" : "100",
+      "acquirer_response_description" : "Approved"
+    },
+    {
+      "acquirer_response_code" : "14",
+      "acquirer_response_description" : "Invalid card number (no such number)"
+    },
+    {
+      "acquirer_response_code" : "SUCCESS",
+      "acquirer_response_description" : "Success"
+    },
+    {
+      "acquirer_response_code" : "81",
+      "acquirer_response_description" : "Reserved for Private use"
+    },
+    {
+      "acquirer_response_code" : "204",
+      "acquirer_response_description" : "Insufficient funds"
+    },
+    {
+      "acquirer_response_code" : "CANCELED",
+      "acquirer_response_description" : "Cancelled"
+    },
+    {
+      "acquirer_response_code" : "201",
+      "acquirer_response_description" : "The issuing bank has questions about the request"
+    },
+    {
+      "acquirer_response_code" : "PENDING",
+      "acquirer_response_description" : "Pending"
+    },
+    {
+      "acquirer_response_code" : "0000",
+      "acquirer_response_description" : "Payment processed successfully"
+    },
+    {
+      "acquirer_response_code" : "EXCEEDED_RETRY_LIMIT",
+      "acquirer_response_description" : "Exceeded retry limit"
+    },
+    {
+      "acquirer_response_code" : "2",
+      "acquirer_response_description" : "Refer to issuers special conditions"
+    },
+    {
+      "acquirer_response_code" : "232",
+      "acquirer_response_description" : "Card type not accepted"
+    },
+    {
+      "acquirer_response_code" : "400",
+      "acquirer_response_description" : "Bad request"
+    },
+    {
+      "acquirer_response_code" : "BLOCKED",
+      "acquirer_response_description" : "Acquirer fraud rule blocked"
+    },
+    {
+      "acquirer_response_code" : "CAPTURED",
+      "acquirer_response_description" : "Captured"
+    },
+    {
+      "acquirer_response_code" : "54",
+      "acquirer_response_description" : "Expired card"
+    },
+    {
+      "acquirer_response_code" : "7",
+      "acquirer_response_description" : "Pick up card, special condition"
+    },
+    {
+      "acquirer_response_code" : "B",
+      "acquirer_response_description" : "Acquirer fraud rule blocked"
+    },
+    {
+      "acquirer_response_code" : "01",
+      "acquirer_response_description" : "Refer to issuer"
+    },
+    {
+      "acquirer_response_code" : "208",
+      "acquirer_response_description" : "Inactive card or card not authorized for CNP Tx"
+    },
+    {
+      "acquirer_response_code" : "202",
+      "acquirer_response_description" : "Expired card"
+    },
+    {
+      "acquirer_response_code" : "0",
+      "acquirer_response_description" : "0"
+    },
+    {
+      "acquirer_response_code" : "ERR_106",
+      "acquirer_response_description" : "Insufficient funds"
+    },
+    {
+      "acquirer_response_code" : "96",
+      "acquirer_response_description" : "System malfunction"
+    },
+    {
+      "acquirer_response_code" : "FAILURE(NOT CAPTURED)",
+      "acquirer_response_description" : "Failed; not captured"
+    },
+    {
+      "acquirer_response_code" : "ERR_106",
+      "acquirer_response_description" : "INSUFFICIENT_BALANCE"
+    },
+    {
+      "acquirer_response_code" : "230",
+      "acquirer_response_description" : "Approved by Issuer but declined by CyberSource due to CVN check"
+    },
+    {
+      "acquirer_response_code" : "00",
+      "acquirer_response_description" : "Success"
+    },
+    {
+      "acquirer_response_code" : "E000002",
+      "acquirer_response_description" : "N\/A"
+    },
+    {
+      "acquirer_response_code" : "false",
+      "acquirer_response_description" : "False"
+    },
+    {
+      "acquirer_response_code" : "SYSTEM_ERROR",
+      "acquirer_response_description" : "System error"
+    },
+    {
+      "acquirer_response_code" : "2994",
+      "acquirer_response_description" : "Payment method selected"
+    },
+    {
+      "acquirer_response_code" : "3000",
+      "acquirer_response_description" : "Payment failed"
+    },
+    {
+      "acquirer_response_code" : "8700",
+      "acquirer_response_description" : "One Time Password is incorrect"
+    },
+    {
+      "acquirer_response_code" : "8600",
+      "acquirer_response_description" : "Some parameters regarding the OTP solution have not been received"
+    },
+    {
+      "acquirer_response_code" : "25",
+      "acquirer_response_description" : "Unable to locate record on file"
+    },
+    {
+      "acquirer_response_code" : "101",
+      "acquirer_response_description" : "The request is missing one or more required fields"
+    },
+    {
+      "acquirer_response_code" : "04",
+      "acquirer_response_description" : "Pick up card"
+    },
+    {
+      "acquirer_response_code" : "13",
+      "acquirer_response_description" : "Invalid amount"
+    },
+    {
+      "acquirer_response_code" : "62",
+      "acquirer_response_description" : "Restricted card"
+    },
+    {
+      "acquirer_response_code" : "05",
+      "acquirer_response_description" : "Do not Honor"
+    },
+    {
+      "acquirer_response_code" : "75",
+      "acquirer_response_description" : "Allowable number of PIN tries exceeded"
+    },
+    {
+      "acquirer_response_code" : "15",
+      "acquirer_response_description" : "No such Issuer"
+    },
+    {
+      "acquirer_response_code" : "65",
+      "acquirer_response_description" : "Exceeds withdrawal frequency limit"
+    },
+    {
+      "acquirer_response_code" : "39",
+      "acquirer_response_description" : "No credit account"
+    },
+    {
+      "acquirer_response_code" : "101",
+      "acquirer_response_description" : "TS"
+    },
+    {
+      "acquirer_response_code" : "42",
+      "acquirer_response_description" : "No Universal account"
+    },
+    {
+      "acquirer_response_code" : "30",
+      "acquirer_response_description" : "Format Error"
+    },
+    {
+      "acquirer_response_code" : "NOT CAPTURED",
+      "acquirer_response_description" : "Not captured"
+    },
+    {
+      "acquirer_response_code" : "205",
+      "acquirer_response_description" : "Stolen or lost card"
+    },
+    {
+      "acquirer_response_code" : "TIMED_OUT",
+      "acquirer_response_description" : "Timed out"
+    },
+    {
+      "acquirer_response_code" : "210",
+      "acquirer_response_description" : "Credit limit reached"
+    },
+    {
+      "acquirer_response_code" : "104",
+      "acquirer_response_description" : "INVALID_OTP"
+    },
+    {
+      "acquirer_response_code" : "91",
+      "acquirer_response_description" : "Issuer or switch inoperative"
+    },
+    {
+      "acquirer_response_code" : "I000000",
+      "acquirer_response_description" : "Payment processed successfully"
+    },
+    {
+      "acquirer_response_code" : "FAILURE(DENIED BY RISK)",
+      "acquirer_response_description" : "Failed; denied by risk rule"
+    },
+    {
+      "acquirer_response_code" : "8500",
+      "acquirer_response_description" : "OTP solution has not been configured correctly"
+    },
+    {
+      "acquirer_response_code" : "FAILURE(HOST TIMEOUT)",
+      "acquirer_response_description" : "Failed; host timeout"
+    },
+    {
+      "acquirer_response_code" : "UNKNOWN",
+      "acquirer_response_description" : "Unknown"
+    },
+    {
+      "acquirer_response_code" : "4004",
+      "acquirer_response_description" : "You have been blacklisted, you cannot make payments"
+    },
+    {
+      "acquirer_response_code" : "43",
+      "acquirer_response_description" : "Stolen card, pick up"
+    },
+    {
+      "acquirer_response_code" : "68",
+      "acquirer_response_description" : "Response received too late"
+    },
+    {
+      "acquirer_response_code" : "901",
+      "acquirer_response_description" : "Request already executed before"
+    },
+    {
+      "acquirer_response_code" : "47",
+      "acquirer_response_description" : "Reserved for ISO use"
+    }
+  ]}

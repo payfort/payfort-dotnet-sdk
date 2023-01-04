@@ -1,0 +1,17 @@
+{
+  "SdkConfiguration": {
+    "Environment": "Test",
+    "AccessCode": "TestAccessCode",
+    "MerchantIdentifier": "TestMerchantIdentifier",
+    "ResponseShaPhrase": "PASS",
+    "ShaType": "Sha256",
+    "ApplePay": {
+      "AccessCode": "TestAccessCode",
+      "ResponseShaPhrase": "PASS",
+      "RequestShaPhrase": "PASS",
+      "ShaType": "Sha256",
+      "DisplayName": "DisplayName",
+      "MerchantUid": "MerchantUid"
+    }
+  }
+}

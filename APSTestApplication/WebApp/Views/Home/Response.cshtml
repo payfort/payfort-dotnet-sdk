@@ -1,0 +1,17 @@
+﻿<div class="text-center">
+    @Html.Raw(ViewBag.Response)
+</div>
+@model bool;
+
+@if (Model)
+{
+    <script>
+        var element = window.parent.document.getElementById("p1");
+        if (!(element == 0)) {
+            element.innerHTML = "@ViewBag.Response";
+        }
+    </script>
+    
+    @Html.Raw(ViewBag.JavaScriptToCloseModal)
+    @Html.Raw(ViewBag.JavaScriptToCloseIframe)
+}

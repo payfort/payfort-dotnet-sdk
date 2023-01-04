@@ -1,0 +1,13 @@
+﻿
+<div class="text-center">
+    <h1>Redirect</h1>
+    @Html.Raw(ViewBag.FormPost)
+
+    <input value='Place Order' type='submit' id='redirectToApsForm' onclick="RedirectToAps()" />
+</div>
+
+<script type='text/javascript'>
+    function RedirectToAps() {
+        document.redirectToApsForm.submit();
+    };
+</script>
