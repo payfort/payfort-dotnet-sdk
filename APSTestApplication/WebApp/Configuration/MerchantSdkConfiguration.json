@@ -1,0 +1,10 @@
+{
+  "SdkConfiguration": {
+    "IsTestEnvironment": "Test",
+    "AccessCode": "",
+    "MerchantIdentifier": "",
+    "RequestShaPhrase": "",
+    "ResponseShaPhrase": "",
+    "ShaType": "Sha256"
+  }
+}

@@ -1,0 +1,203 @@
+﻿(function($) {
+    'use strict';
+
+    /**
+     * All of the code for your checkout functionality placed here.
+     * should reside in this file.
+     */
+    var debug = false;
+    $(document).ready(function() {
+        if (window.ApplePaySession) {
+            if (ApplePaySession.canMakePayments) {
+                setTimeout(function() {
+                    $('.apple_pay_option').removeClass('hide-me')
+                }, 2000);
+            }
+        }
+    });
+
+    function initApplePayment(evt) {
+        var runningAmount = 5;
+        var runningPP = parseFloat(0);
+        var runningTotal = function() {
+            return parseFloat(runningAmount + runningPP).toFixed(2);
+        }
+        var shippingOption = "";
+
+        var cart_array = [];
+        var x = 0;
+        var subtotal = 5;
+        var tax_total = 1;
+        var shipping_total = 2;
+        var discount_total = 3;
+        var supported_networks = ['visa', 'masterCard', 'amex', 'mada'];
+
+        cart_array[x++] = {
+            type: 'final',
+            label: 'Subtotal',
+            amount: parseFloat(subtotal).toFixed(2)
+        };
+        cart_array[x++] = {
+            type: 'final',
+            label: 'Shipping fees',
+            amount: parseFloat(shipping_total).toFixed(2)
+        };
+        if (parseFloat(discount_total) >= 1) {
+            cart_array[x++] = {
+                type: 'final',
+                label: 'Discount',
+                amount: parseFloat(discount_total).toFixed(2)
+            };
+        }
+        cart_array[x++] = {
+            type: 'final',
+            label: 'Tax',
+            amount: parseFloat(tax_total).toFixed(2)
+        };
+
+        shippingOption = [{
+            label: 'Standard Shipping',
+            amount: getShippingCosts('domestic_std', true),
+            detail: '3-5 days',
+            identifier: 'domestic_std'
+        }, {
+            label: 'Expedited Shipping',
+            amount: getShippingCosts('domestic_exp', false),
+            detail: '1-3 days',
+            identifier: 'domestic_exp'
+        }];
+
+        function getShippingCosts(shippingIdentifier, updateRunningPP) {
+            var shippingCost = 0;
+
+            switch (shippingIdentifier) {
+                case 'domestic_std':
+                    shippingCost = 0;
+                    break;
+                case 'domestic_exp':
+                    shippingCost = 0;
+                    break;
+                case 'international':
+                    shippingCost = 0;
+                    break;
+                default:
+                    shippingCost = 0;
+            }
+
+            if (updateRunningPP == true) {
+                runningPP = shippingCost;
+            }
+
+            return shippingCost;
+
+        }
+        var paymentRequest = {
+            currencyCode: 'AED',
+            countryCode: 'AE',
+            //requiredShippingContactFields: ['postalAddress'],
+            lineItems: cart_array,
+            total: {
+                label: 'DisplayName',
+                amount: runningTotal()
+            },
+            supportedNetworks: supported_networks,
+            supported_countries: ['AE', 'RO'],
+            merchantCapabilities: ['supports3DS']
+        };
+
+        var session = new ApplePaySession(5, paymentRequest);
+
+        // Merchant Validation
+        session.onvalidatemerchant = function(event) {
+            var promise = performValidation(event.validationURL);
+            promise.then(
+                function(merchantSession) {
+                    session.completeMerchantValidation(merchantSession);
+                }
+            );
+        }
+
+        function performValidation(apple_url) {
+            return new Promise(
+                function(resolve, reject) {
+                    $.ajax({
+                        url: 'http://test1.com',
+                        type: 'POST',
+                        data: {
+                            url: apple_url
+                        },
+                        success: function(data) {
+                            if (!data) {
+                                reject;
+                            } else {
+                                resolve(data);
+                            }
+                        },
+                        error: function() {
+                            reject;
+                        }
+                    })
+                }
+            );
+        }
+
+        session.onpaymentauthorized = function(event) {
+            var promise = sendPaymentToken(event.payment.token);
+            promise.then(
+                function(success) {
+                    var status;
+                    if (success) {
+                        document.getElementById("applePay").style.display = "none";
+                        status = ApplePaySession.STATUS_SUCCESS;
+                        sendPaymentToAps(event.payment.token);
+                    } else {
+                        status = ApplePaySession.STATUS_FAILURE;
+                    }
+
+                    session.completePayment(status);
+                }
+            );
+        }
+
+        function sendPaymentToken(paymentToken) {
+            return new Promise(
+                function(resolve, reject) {
+                    resolve(true);
+                }
+            );
+        }
+
+        function sendPaymentToAps(inputData) {
+            $.ajax({
+                url: 'http://test.com',
+                type: 'POST',
+                data: {"data":inputData},
+                success: function(data) {
+                    if (!data) {
+                        reject;
+                    } else {
+                        data = JSON.parse(data);
+                        resolve(data);
+                    }
+                },
+                error: function() {
+                    reject;
+                }
+            })
+        }
+
+        session.oncancel = function(event) {
+            //collect the data if you want to track the ApplePay events
+        }
+
+        session.begin();
+    }
+    $(document.body).on(
+        'click',
+        '#applePay',
+        function(evt) {
+            initApplePayment(evt);
+        }
+    );
+
+})(jQuery);
