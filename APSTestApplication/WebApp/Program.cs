@@ -9,7 +9,7 @@ builder.Services.AddControllersWithViews();
 
 //LoggingConfiguration loggingConfiguration = new LoggingConfiguration(builder.Services, @"SerilogConfig.json", "APSTestApplication");
 
-var certificate = new X509Certificate2("cert-and-key.pfx", "Aa12345678*");
+var certificate = new X509Certificate2("cert filename .pfx format", "pfx password");
 
 //set in client 
 using ILoggerFactory factory = LoggerFactory
