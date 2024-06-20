@@ -7,30 +7,31 @@ using APS.DotNetSDK.Configuration;
 using APS.DotNetSDK.Exceptions;
 using APS.DotNetSDK.Maintenance;
 using APS.DotNetSDK.Service;
-using APS.DotNetSDK.Signature;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System.Security.Cryptography.X509Certificates;
 using ApplePayPaymentMethod = APS.DotNetSDK.Commands.Requests.ApplePay.ApplePayPaymentMethod;
-using Environment = APS.DotNetSDK.Configuration.Environment;
 
 namespace APS.DotNetSDK.Tests.Maintenance
 {
     public class MaintenanceOperationsTests
     {
         private const string FilePathMerchantConfiguration = @"Configuration\MerchantSdkConfiguration.json";
-        private const string FilePath = @"Maintenance\Certificate.pem";
+        private SdkConfigurationDto _sdkConfigurationDto;
+        private readonly string _filePath = $"Maintenance{Path.DirectorySeparatorChar.ToString()}Certificate.pem";
         private readonly Mock<IApiProxy> _securedApiProxyMock = new();
+        private readonly Mock<ILoggerFactory> _loggerFactoryMock = new();
+        private readonly Mock<ILogger<MaintenanceOperations>> _loggerMock = new();
 
         [SetUp]
         public void Setup()
         {
-
-            LoggingConfiguration loggingConfiguration = new LoggingConfiguration(new ServiceCollection(), @"Logging/Config/SerilogConfig.json", "APS.DotNetSDK");
-
+            _loggerFactoryMock.Setup(x => x.CreateLogger(It.IsAny<string>())).Returns(_loggerMock.Object);
+            
             SdkConfiguration.Configure(
-                FilePathMerchantConfiguration, loggingConfiguration,
-                new ApplePayConfiguration(new X509Certificate2(FilePath)));
+                FilePathMerchantConfiguration, _loggerFactoryMock.Object,
+                new ApplePayConfiguration(new X509Certificate2(_filePath)));
+            _sdkConfigurationDto = SdkConfiguration.GetAccount("MainAccount");
         }
 
         [Test]
@@ -109,7 +110,7 @@ namespace APS.DotNetSDK.Tests.Maintenance
                 Signature = "signature",
             };
 
-            var applePayAuthorizeRequestCommand = new ApplePayAuthorizeRequestCommand(authorizeRequestCommand, applePayRequestCommand);
+            var applePayAuthorizeRequestCommand = new ApplePayAuthorizeRequestCommand(authorizeRequestCommand, applePayRequestCommand, _sdkConfigurationDto);
 
             var expectedAuthorizeResponseCommand = new ApplePayAuthorizeResponseCommand()
             {
@@ -194,7 +195,7 @@ namespace APS.DotNetSDK.Tests.Maintenance
                 Signature = "signature",
             };
 
-            var applePayAuthorizeRequestCommand = new ApplePayPurchaseRequestCommand(authorizeRequestCommand, applePayRequestCommand);
+            var applePayAuthorizeRequestCommand = new ApplePayPurchaseRequestCommand(authorizeRequestCommand, applePayRequestCommand, _sdkConfigurationDto);
 
             var expectedAuthorizeResponseCommand = new ApplePayPurchaseResponseCommand()
             {
@@ -280,6 +281,7 @@ namespace APS.DotNetSDK.Tests.Maintenance
         public void Authorize_InputIsNotValid_ExceptionIsThrown()
         {
             //arrange
+
             var authorizeRequestCommand = new AuthorizeRequestCommand
             {
                 MerchantReference = null,
@@ -557,7 +559,7 @@ namespace APS.DotNetSDK.Tests.Maintenance
             //act, assert
             Assert.ThrowsAsync<ArgumentNullException>(async () => await operation.CheckStatusAsync(requestCommand));
         }
-        
+
         private async Task TestMaintenanceOperation<TRequest, TResponse>(TRequest requestCommand,
             TResponse expectedResponseCommand, Func<object, Task<TResponse>> func)
         {

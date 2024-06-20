@@ -3,7 +3,7 @@ using APS.DotNetSDK.Service;
 using System.Threading.Tasks;
 using APS.DotNetSDK.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 
 namespace APS.DotNetSDK.Web.ApplePayIntegration
 {
@@ -12,6 +12,7 @@ namespace APS.DotNetSDK.Web.ApplePayIntegration
         private readonly IApiProxy _apiProxy;
         private readonly ILogger<ApplePayClient> _logger;
         private readonly ApplePaySessionRetrievalConfiguration _configuration;
+       
 
         private readonly object _lockObject = new object();
         private bool _disposed;
@@ -19,10 +20,10 @@ namespace APS.DotNetSDK.Web.ApplePayIntegration
 
         internal ApplePayClient(IApiProxy apiProxy)
         {
-            var configuration = new ApsConfiguration(SdkConfiguration.IsTestEnvironment);
+            var configuration = new ApsConfiguration(SdkConfiguration.AllConfigurations.First().IsTestEnvironment);
             _configuration = configuration.GetApplePayConfiguration();
-
-            _logger = SdkConfiguration.ServiceProvider.GetService<ILogger<ApplePayClient>>();
+            
+            _logger = SdkConfiguration.LoggerFactory.CreateLogger<ApplePayClient>();
 
             _apiProxy = apiProxy;
         }
@@ -31,21 +32,25 @@ namespace APS.DotNetSDK.Web.ApplePayIntegration
         /// Constructor for ApplePay Client
         /// </summary>
         /// <exception cref="Exceptions.SdkConfigurationException">Get the exception when sdk configuration is not set</exception>
-        public ApplePayClient()
+        public ApplePayClient(string nameAccount = null)
         {
-            var configuration = new ApsConfiguration(SdkConfiguration.IsTestEnvironment);
+            var account = SdkConfiguration.GetAccount(nameAccount);
+            var configuration = new ApsConfiguration(account.IsTestEnvironment);
             _configuration = configuration.GetApplePayConfiguration();
 
-            SdkConfiguration.ValidateApplePayConfiguration();
+            SdkConfiguration.ValidateApplePayConfiguration(account);
 
-            _apiProxy = new ApiProxy(new HttpClientWrapper(SdkConfiguration.ApplePayConfiguration.SecurityCertificate,
+            _apiProxy = new ApiProxy(new HttpClientWrapper(account.ApplePayConfiguration.SecurityCertificate,
                 _configuration.SslProtocol));
+            
+            _logger = SdkConfiguration.LoggerFactory.CreateLogger<ApplePayClient>();
 
-            _logger = SdkConfiguration.ServiceProvider.GetService<ILogger<ApplePayClient>>();
         }
 
-        public async Task<PaymentSessionResponse> RetrieveMerchantSessionAsync(string url)
+        public async Task<PaymentSessionResponse> RetrieveMerchantSessionAsync(string url, string nameAccount = null)
         {
+            var account = SdkConfiguration.GetAccount(nameAccount);
+
             bool result = Uri.TryCreate(url, UriKind.Absolute, out var uri);
             if (result == false || uri.Scheme != Uri.UriSchemeHttps)
             {
@@ -54,10 +59,10 @@ namespace APS.DotNetSDK.Web.ApplePayIntegration
 
             var request = new PaymentSessionRequest()
             {
-                MerchantIdentifier = SdkConfiguration.ApplePayConfiguration.MerchantUid,
+                MerchantIdentifier = account.ApplePayConfiguration.MerchantUid,
                 Initiative = _configuration.Initiative,
-                InitiativeContext = SdkConfiguration.ApplePayConfiguration.DomainName,
-                DisplayName = SdkConfiguration.ApplePayConfiguration.DisplayName
+                InitiativeContext = account.ApplePayConfiguration.DomainName,
+                DisplayName = account.ApplePayConfiguration.DisplayName
             };
 
             _logger.LogDebug($"Start retrieving merchant session:[Url:{url}]");
@@ -77,7 +82,7 @@ namespace APS.DotNetSDK.Web.ApplePayIntegration
 
                 return response;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError($"{ex.Message}. [Request:{@request.ToAnonymizedJson()}]");
                 throw;

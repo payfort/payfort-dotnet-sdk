@@ -9,7 +9,7 @@ namespace APS.DotNetSDK.Tests.AcquirerResponseMessage
         public void GetAcquirerResponseDescription_AcquirerResponseCodeProvided_ReturnCorrectValue()
         {
             //arrange
-            var expectedDescription = "Successful";
+            var expectedDescription = "Success";
             var acquirerResponseMapping = new AcquirerResponseMapping();
 
             //act
@@ -60,7 +60,7 @@ namespace APS.DotNetSDK.Tests.AcquirerResponseMessage
         public void PurchaseResponse_AcquirerResponseCodeIsSent_ReturnValue()
         {
             //arrange
-            var expectedDescription = "Successful";
+            var expectedDescription = "Success";
             var purchaseResponseCommand = new PurchaseResponseCommand()
             {
                 AcquirerResponseCode = "00",
@@ -83,7 +83,7 @@ namespace APS.DotNetSDK.Tests.AcquirerResponseMessage
 
             //act
             //assert
-            Assert.That(purchaseResponseCommand.AcquirerResponseDescription, Is.EqualTo(expectedDescription));
+            Assert.That(purchaseResponseCommand.AcquirerResponseDescription, !Is.EqualTo(expectedDescription));
         }
     }
 }

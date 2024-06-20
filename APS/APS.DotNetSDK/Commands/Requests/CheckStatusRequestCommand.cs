@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text.Json;
 using System.Text.Encodings.Web;
-using APS.DotNetSDK.Configuration;
 using System.Text.Json.Serialization;
 
 namespace APS.DotNetSDK.Commands.Requests
@@ -11,8 +10,6 @@ namespace APS.DotNetSDK.Commands.Requests
         private string _returnThirdPartyResponseCodes;
         public CheckStatusRequestCommand()
         {
-            AccessCode = SdkConfiguration.AccessCode;
-            MerchantIdentifier = SdkConfiguration.MerchantIdentifier;
         }
 
         [JsonPropertyName("query_command")]

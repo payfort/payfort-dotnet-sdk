@@ -13,6 +13,6 @@ namespace APS.DotNetSDK.Web.Installments
         /// <returns>The get installments response received from the provider</returns>
         /// <exception cref="Exceptions.SignatureException">Get the exception when signature mismatch</exception>
         /// <exception cref="System.Exception">Get the exception when there is an issue to the payment gateway</exception>
-        Task<GetInstallmentsResponseCommand> GetInstallmentsPlansAsync(GetInstallmentsRequestCommand command);
+        Task<GetInstallmentsResponseCommand> GetInstallmentsPlansAsync(GetInstallmentsRequestCommand command, string nameAccount = null);
     }
 }

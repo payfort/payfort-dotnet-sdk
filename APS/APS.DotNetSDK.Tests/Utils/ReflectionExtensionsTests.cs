@@ -1,6 +1,6 @@
 ﻿using APS.DotNetSDK.Tests.Signature.Models;
-using APS.DotNetSDK.Utils;
 using System.Reflection;
+using APS.Signature.Utils;
 
 namespace APS.DotNetSDK.Tests.Utils
 {

@@ -8,7 +8,7 @@ namespace APS.DotNetSDK.Tests.Utils
         public void ReadFromFile_ReturnsTheReadedText()
         {
             //arrange
-            const string filePath = @"Utils\TestFileReader.txt";
+            string filePath = $"Utils{ Path.DirectorySeparatorChar.ToString() }TestFileReader.txt";
             string expectedResult = "This is a test.";
 
             //act

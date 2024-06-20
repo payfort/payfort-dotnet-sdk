@@ -17,6 +17,6 @@ namespace APS.DotNetSDK.Web.ApplePayIntegration
         /// <exception cref="System.ArgumentNullException">Get the exception when the mandatory parameters are not sent</exception>
         /// <exception cref="Exceptions.SdkConfigurationException">Get the exception when the mandatory properties are not sent in SDK configuration</exception>
         string GetJavaScriptForApplePayIntegration(string ajaxSessionValidationUrl, string ajaxCommandUrl, string countryCode, string currencyCode,
-            IEnumerable<string> supportedNetworks, IEnumerable<string> supportedCountries = null);
+            IEnumerable<string> supportedNetworks, IEnumerable<string> supportedCountries = null, string nameAccount = null);
     }
 }

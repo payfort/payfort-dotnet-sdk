@@ -1,20 +1,25 @@
 ﻿using APS.DotNetSDK.Commands.Requests;
 using APS.DotNetSDK.Configuration;
 using APS.DotNetSDK.Web;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace APS.DotNetSDK.Tests.Web
 {
     public class HtmlProviderInstallmentsTests
     {
         private const string FilePathMerchantConfiguration = @"Configuration\MerchantSdkConfiguration.json";
+        private readonly Mock<ILoggerFactory> _loggerFactoryMock = new Mock<ILoggerFactory>();
+        private readonly Mock<ILogger<HtmlProviderInstallmentsTests>> _loggerMock =new ();
+        private SdkConfigurationDto _sdkConfigurationDto;
         [SetUp]
         public void Setup()
         {
-            LoggingConfiguration loggingConfiguration = new LoggingConfiguration(new ServiceCollection(), @"Logging/Config/SerilogConfig.json", "APS.DotNetSDK");
+            _loggerFactoryMock.Setup(x => x.CreateLogger(It.IsAny<string>())).Returns(_loggerMock.Object);
 
             SdkConfiguration.Configure(FilePathMerchantConfiguration,
-                loggingConfiguration);
+                _loggerFactoryMock.Object);
+            _sdkConfigurationDto = SdkConfiguration.GetAccount("MainAccount");
         }
         #region GetHtmlForRedirectIntegration_Installments_Purchase
         [Test]
@@ -23,6 +28,8 @@ namespace APS.DotNetSDK.Tests.Web
             //arrange
             var objectTest = new PurchaseRequestCommand
             {
+                AccessCode = _sdkConfigurationDto.AccessCode,
+                MerchantIdentifier = _sdkConfigurationDto.MerchantIdentifier,
                 MerchantReference = "TestMerchantReference",
                 Language = "TestLanguage",
                 Signature = "TestSignature",
@@ -42,14 +49,14 @@ namespace APS.DotNetSDK.Tests.Web
                 "<input type='hidden' name='installments' value=\"STANDALONE\">" +
                 "<input type='hidden' name='app_programming' value=\".NET\">" +
                 "<input type='hidden' name='app_plugin' value=\".dotNETSDK\">" +
-                "<input type='hidden' name='app_plugin_version' value=\"v2.0.0\">" +
+                "<input type='hidden' name='app_plugin_version' value=\"v2.1.0\">" +
                 "<input type='hidden' name='app_ver' value=\"1.0.0.0\">" +
                 "<input type='hidden' name='app_framework' value=\".NET\">" +
                 "<input type='hidden' name='access_code' value=\"TestAccessCode\">" +
                 "<input type='hidden' name='merchant_identifier' value=\"TestMerchantIdentifier\">" +
                 "<input type='hidden' name='merchant_reference' value=\"TestMerchantReference\">" +
                 "<input type='hidden' name='language' value=\"testlanguage\">" +
-                "<input type='hidden' name='signature' value=\"1c92232101516677cadbeb5caed537b2aeea17f4c4cd5fece4c7c60b485c9c10\"></form>";
+                "<input type='hidden' name='signature' value=\"0a5861c25d213dfe1bba698362d35b0655e87b127ab55354f3a8b76ffe343b58\"></form>";
             var actualResult = service.GetHtmlForRedirectIntegration(objectTest);
 
             //assert
@@ -62,6 +69,8 @@ namespace APS.DotNetSDK.Tests.Web
             //arrange
             var objectTest = new PurchaseRequestCommand
             {
+                AccessCode = _sdkConfigurationDto.AccessCode,
+                MerchantIdentifier = _sdkConfigurationDto.MerchantIdentifier,
                 MerchantReference = "TestMerchantReference",
                 Language = "TestLanguage",
                 Signature = "TestSignature",
@@ -87,6 +96,8 @@ namespace APS.DotNetSDK.Tests.Web
             //arrange
             var objectTest = new TokenizationRequestCommand
             {
+                AccessCode = _sdkConfigurationDto.AccessCode,
+                MerchantIdentifier = _sdkConfigurationDto.MerchantIdentifier,
                 MerchantReference = "TestMerchantReference",
                 Language = "TestLanguage",
                 Signature = "TestSignature",
@@ -122,6 +133,8 @@ namespace APS.DotNetSDK.Tests.Web
             //arrange
             var objectTest = new TokenizationRequestCommand
             {
+                AccessCode = _sdkConfigurationDto.AccessCode,
+                MerchantIdentifier = _sdkConfigurationDto.MerchantIdentifier,
                 MerchantReference = "TestMerchantReference",
                 Language = "TestLanguage",
                 Signature = "TestSignature",
@@ -143,6 +156,8 @@ namespace APS.DotNetSDK.Tests.Web
             //arrange
             var objectTest = new TokenizationRequestCommand
             {
+                AccessCode = _sdkConfigurationDto.AccessCode,
+                MerchantIdentifier = _sdkConfigurationDto.MerchantIdentifier,
                 MerchantReference = "TestMerchantReference",
                 Language = "TestLanguage",
                 Signature = "TestSignature",

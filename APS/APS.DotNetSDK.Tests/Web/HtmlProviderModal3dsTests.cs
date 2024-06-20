@@ -1,20 +1,23 @@
 ﻿using APS.DotNetSDK.Configuration;
 using APS.DotNetSDK.Web;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace APS.DotNetSDK.Tests.Web
 {
     public class HtmlProviderModal3dsTests
     {
         private const string FilePathMerchantConfiguration = @"Configuration\MerchantSdkConfiguration.json";
+        private readonly Mock<ILoggerFactory> _loggerFactoryMock = new Mock<ILoggerFactory>();
+        private readonly Mock<ILogger<HtmlProviderModal3dsTests>> _loggerMock = new();
         [SetUp]
         public void Setup()
         {
-            var loggingConfiguration = new LoggingConfiguration(new ServiceCollection(), @"Logging/Config/SerilogConfig.json", "APS.DotNetSDK");
+            _loggerFactoryMock.Setup(x => x.CreateLogger(It.IsAny<string>())).Returns(_loggerMock.Object);
 
             SdkConfiguration.Configure(
                 FilePathMerchantConfiguration,
-                loggingConfiguration);
+                _loggerFactoryMock.Object);
         }
 
         [Test]
@@ -27,7 +30,7 @@ namespace APS.DotNetSDK.Tests.Web
             var actualJavascriptContent = service.Handle3dsSecure(@"https://www.google.com/", true);
 
             //assert
-            var expectedJavascriptContent = File.ReadAllTextAsync(@"Web\ExpectedModal3ds.txt").Result;
+            var expectedJavascriptContent = File.ReadAllTextAsync($"Web{ Path.DirectorySeparatorChar.ToString() }ExpectedModal3ds.txt").Result;
 
             Assert.That(actualJavascriptContent, Is.EqualTo(expectedJavascriptContent));
         }
@@ -77,7 +80,7 @@ namespace APS.DotNetSDK.Tests.Web
         public void GetJavaScriptToCloseIframe_WithProvidedUrl_ReturnJavaScriptWithModalContent()
         {
             //arrange
-            var expectedJavaScript =@File.ReadAllTextAsync(@"Web\CloseIframeWithModalContent.txt").Result;
+            var expectedJavaScript =@File.ReadAllTextAsync($"Web{ Path.DirectorySeparatorChar.ToString() }CloseIframeWithModalContent.txt").Result;
             const string url = @"http://test.com";
             var service = new HtmlProvider();
             //assert
@@ -98,7 +101,7 @@ namespace APS.DotNetSDK.Tests.Web
             var actualJavascriptContent = service.GetJavaScriptForFingerPrint();
 
             //assert
-            var expectedJavascriptContent = File.ReadAllTextAsync(@"Web\ExpectedFingerPrintJavaScript.txt").Result;
+            var expectedJavascriptContent = File.ReadAllTextAsync($"Web{ Path.DirectorySeparatorChar.ToString() }ExpectedFingerPrintJavaScript.txt").Result;
 
             Assert.That(actualJavascriptContent, Is.EqualTo(expectedJavascriptContent));
         }

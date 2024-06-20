@@ -2,7 +2,6 @@
 using System.Text.Json;
 using System.Reflection;
 using System.Text.Encodings.Web;
-using APS.DotNetSDK.Configuration;
 using System.Text.Json.Serialization;
 
 namespace APS.DotNetSDK.Commands.Requests
@@ -13,8 +12,6 @@ namespace APS.DotNetSDK.Commands.Requests
 
         public AuthorizeRequestCommand()
         {
-            AccessCode = SdkConfiguration.AccessCode;
-            MerchantIdentifier = SdkConfiguration.MerchantIdentifier;
         }
 
         [JsonPropertyName("command")]
@@ -191,7 +188,7 @@ namespace APS.DotNetSDK.Commands.Requests
         public string AppPlugin => ".dotNETSDK";
 
         [JsonPropertyName("app_plugin_version")]
-        public string AppPluginVersion => "v2.0.0";
+        public string AppPluginVersion => "v2.1.0";
 
         [JsonPropertyName("app_ver")]
         public string AppVersion => Assembly.GetAssembly(typeof(RequestCommand)).GetName().Version.ToString();

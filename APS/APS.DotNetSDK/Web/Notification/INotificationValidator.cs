@@ -12,7 +12,7 @@ namespace APS.DotNetSDK.Web.Notification
         /// <returns>The notification validation response</returns>
         /// <exception cref="Exceptions.InvalidNotification"> When the notification is invalid</exception>
         /// <exception cref="Exceptions.SignatureException">Get the exception when there are more than two levels of reference</exception>
-        NotificationValidationResponse Validate(HttpRequest httpRequest);
+        NotificationValidationResponse Validate(HttpRequest httpRequest, string nameAccount = null);
 
         /// <summary>
         /// Extract the necessary information from the HttpRequest, validate async notification
@@ -22,6 +22,6 @@ namespace APS.DotNetSDK.Web.Notification
         /// <returns>The notification validation response</returns>
         /// <exception cref="Exceptions.InvalidNotification"> When the notification is invalid</exception>
         /// <exception cref="Exceptions.SignatureException">Get the exception when there are more than two levels of reference</exception>
-        NotificationValidationResponse ValidateAsyncNotification(HttpRequest httpRequest);
+        NotificationValidationResponse ValidateAsyncNotification(HttpRequest httpRequest, string nameAccount = null);
     }
 }

@@ -2,8 +2,8 @@
 using System.Text.Json;
 using System.Reflection;
 using System.Text.Encodings.Web;
-using APS.DotNetSDK.Configuration;
 using System.Text.Json.Serialization;
+using APS.DotNetSDK.Commands.Requests.Airlines;
 
 namespace APS.DotNetSDK.Commands.Requests
 {
@@ -13,8 +13,6 @@ namespace APS.DotNetSDK.Commands.Requests
         private string _installments;
         public PurchaseRequestCommand()
         {
-            AccessCode = SdkConfiguration.AccessCode;
-            MerchantIdentifier = SdkConfiguration.MerchantIdentifier;
         }
 
         [JsonPropertyName("command")]
@@ -208,7 +206,7 @@ namespace APS.DotNetSDK.Commands.Requests
         public string AppPlugin => ".dotNETSDK";
 
         [JsonPropertyName("app_plugin_version")]
-        public string AppPluginVersion => "v2.0.0";
+        public string AppPluginVersion => "v2.1.0";
 
         [JsonPropertyName("app_ver")]
         public string AppVersion => Assembly.GetAssembly(typeof(RequestCommand)).GetName().Version.ToString();
@@ -458,6 +456,9 @@ namespace APS.DotNetSDK.Commands.Requests
 
         [JsonPropertyName("rcpt_email")]
         public string RcptEmail { get; set; }
+        
+        [JsonPropertyName("airline_data")]
+        public AirlineData AirlineData { get; set; }
 
         public override void ValidateMandatoryProperties()
         {

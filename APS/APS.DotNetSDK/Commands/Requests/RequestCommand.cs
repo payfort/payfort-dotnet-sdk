@@ -8,10 +8,10 @@ namespace APS.DotNetSDK.Commands.Requests
         private string _language;
 
         [JsonPropertyName("access_code")]
-        public string AccessCode { get; protected set; }
+        public string AccessCode { get; set; }
 
         [JsonPropertyName("merchant_identifier")]
-        public string MerchantIdentifier { get; protected set; }
+        public string MerchantIdentifier { get; set; }
 
         [JsonPropertyName("merchant_reference")]
         public string MerchantReference { get; set; }

@@ -1,21 +1,24 @@
 ﻿using APS.DotNetSDK.Commands.Requests;
 using APS.DotNetSDK.Configuration;
 using APS.DotNetSDK.Web;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace APS.DotNetSDK.Tests.Web
 {
     public class HtmlProviderTests
     {
         private const string FilePathMerchantConfiguration = @"Configuration\MerchantSdkConfiguration.json";
+        private readonly Mock<ILoggerFactory> _loggerFactoryMock = new Mock<ILoggerFactory>();
+        private readonly Mock<ILogger<HtmlProvider>> _loggerMock = new();
         [SetUp]
         public void Setup()
         {
-            LoggingConfiguration loggingConfiguration = new LoggingConfiguration(new ServiceCollection(), @"Logging/Config/SerilogConfig.json", "APS.DotNetSDK");
+            _loggerFactoryMock.Setup(x => x.CreateLogger(It.IsAny<string>())).Returns(_loggerMock.Object);
 
             SdkConfiguration.Configure(
                 FilePathMerchantConfiguration,
-                loggingConfiguration);
+                _loggerFactoryMock.Object);
         }
 
         #region GetHtmlForRedirectIntegration_Authorization
@@ -42,14 +45,14 @@ namespace APS.DotNetSDK.Tests.Web
                 "<input type='hidden' name='customer_email' value=\"TestEmail\">" +
                 "<input type='hidden' name='app_programming' value=\".NET\">" +
                 "<input type='hidden' name='app_plugin' value=\".dotNETSDK\">" +
-                "<input type='hidden' name='app_plugin_version' value=\"v2.0.0\">" +
+                "<input type='hidden' name='app_plugin_version' value=\"v2.1.0\">" +
                 "<input type='hidden' name='app_ver' value=\"1.0.0.0\">" +
                 "<input type='hidden' name='app_framework' value=\".NET\">" +
                 "<input type='hidden' name='access_code' value=\"TestAccessCode\">" +
                 "<input type='hidden' name='merchant_identifier' value=\"TestMerchantIdentifier\">" +
                 "<input type='hidden' name='merchant_reference' value=\"TestMerchantReference\">" +
                 "<input type='hidden' name='language' value=\"testlanguage\">" +
-                "<input type='hidden' name='signature' value=\"df7f6e317120b5d7aec0c234b15a112514a65497cabd851aa2cede847f29a6e6\"></form>";
+                "<input type='hidden' name='signature' value=\"1317e9815b68033efeefb018c5d76e522657ea0d28dd0c3cd868314172860c72\"></form>";
             var actualResult = service.GetHtmlForRedirectIntegration(objectTest);
 
             //assert
@@ -104,14 +107,14 @@ namespace APS.DotNetSDK.Tests.Web
                 "<input type='hidden' name='remember_me' value=\"YES\">" +
                 "<input type='hidden' name='app_programming' value=\".NET\">" +
                 "<input type='hidden' name='app_plugin' value=\".dotNETSDK\">" +
-                "<input type='hidden' name='app_plugin_version' value=\"v2.0.0\">" +
+                "<input type='hidden' name='app_plugin_version' value=\"v2.1.0\">" +
                 "<input type='hidden' name='app_ver' value=\"1.0.0.0\">" +
                 "<input type='hidden' name='app_framework' value=\".NET\">" +
                 "<input type='hidden' name='access_code' value=\"TestAccessCode\">" +
                 "<input type='hidden' name='merchant_identifier' value=\"TestMerchantIdentifier\">" +
                 "<input type='hidden' name='merchant_reference' value=\"TestMerchantReference\">" +
                 "<input type='hidden' name='language' value=\"testlanguage\">" +
-                "<input type='hidden' name='signature' value=\"c9fc329430a37645bfc8599d3047caaddad29c899b5b9922219117590d5a3978\"></form>";
+                "<input type='hidden' name='signature' value=\"6c95de0aa2627d8ebc72a8b24e3bd94e849554dc3344c605e7e57f5d2dbe57a8\"></form>";
             var actualResult = service.GetHtmlForRedirectIntegration(objectTest);
 
             //assert
@@ -143,14 +146,14 @@ namespace APS.DotNetSDK.Tests.Web
                 "<input type='hidden' name='customer_email' value=\"TestEmail\">" +
                 "<input type='hidden' name='app_programming' value=\".NET\">" +
                 "<input type='hidden' name='app_plugin' value=\".dotNETSDK\">" +
-                "<input type='hidden' name='app_plugin_version' value=\"v2.0.0\">" +
+                "<input type='hidden' name='app_plugin_version' value=\"v2.1.0\">" +
                 "<input type='hidden' name='app_ver' value=\"1.0.0.0\">" +
                 "<input type='hidden' name='app_framework' value=\".NET\">" +
                 "<input type='hidden' name='access_code' value=\"TestAccessCode\">" +
                 "<input type='hidden' name='merchant_identifier' value=\"TestMerchantIdentifier\">" +
                 "<input type='hidden' name='merchant_reference' value=\"TestMerchantReference\">" +
                 "<input type='hidden' name='language' value=\"testlanguage\">" +
-                "<input type='hidden' name='signature' value=\"0ca8af28c713f4adf490d013aded3b2aa8701eec34c34e5db9170736c7b3daf1\"></form>";
+                "<input type='hidden' name='signature' value=\"fd4146b2a8ea579bba48c2cc40b2e2ee8f63dc0e5dea0cf39ead84b165ebd2e1\"></form>";
             var actualResult = service.GetHtmlForRedirectIntegration(objectTest);
 
             //assert
@@ -205,14 +208,14 @@ namespace APS.DotNetSDK.Tests.Web
                 "<input type='hidden' name='remember_me' value=\"YES\">" +
                 "<input type='hidden' name='app_programming' value=\".NET\">" +
                 "<input type='hidden' name='app_plugin' value=\".dotNETSDK\">" +
-                "<input type='hidden' name='app_plugin_version' value=\"v2.0.0\">" +
+                "<input type='hidden' name='app_plugin_version' value=\"v2.1.0\">" +
                 "<input type='hidden' name='app_ver' value=\"1.0.0.0\">" +
                 "<input type='hidden' name='app_framework' value=\".NET\">" +
                 "<input type='hidden' name='access_code' value=\"TestAccessCode\">" +
                 "<input type='hidden' name='merchant_identifier' value=\"TestMerchantIdentifier\">" +
                 "<input type='hidden' name='merchant_reference' value=\"TestMerchantReference\">" +
                 "<input type='hidden' name='language' value=\"testlanguage\">" +
-                "<input type='hidden' name='signature' value=\"0422ea9daa4e20eb45b810062f80b639d2c37041f5b2b77576544910a64385dc\"></form>";
+                "<input type='hidden' name='signature' value=\"88c67155d64616a7e2071cbad9442c63be7c93f2680cd5392fd2d80d8f3a46bf\"></form>";
             var actualResult = service.GetHtmlForRedirectIntegration(objectTest);
 
             //assert

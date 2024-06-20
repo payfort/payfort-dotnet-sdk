@@ -7,13 +7,17 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-LoggingConfiguration loggingConfiguration = new LoggingConfiguration(builder.Services, @"SerilogConfig.json", "APSTestApplication");
+//LoggingConfiguration loggingConfiguration = new LoggingConfiguration(builder.Services, @"SerilogConfig.json", "APSTestApplication");
 
-var certificate = new X509Certificate2("cert filename .pfx format", "pfx password");
+var certificate = new X509Certificate2("cert-and-key.pfx", "Aa12345678*");
 
-var serviceProvider = SdkConfiguration
+//set in client 
+using ILoggerFactory factory = LoggerFactory
+    .Create(builder => builder.AddConsole());
+
+SdkConfiguration
     .Configure(@"MerchantSdkConfiguration.json",
-        loggingConfiguration,
+         factory,
         new ApplePayConfiguration(certificate));
 
 var fingerPrintJavaScript = new HtmlProvider().GetJavaScriptForFingerPrint();

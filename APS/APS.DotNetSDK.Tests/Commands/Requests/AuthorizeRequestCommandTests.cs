@@ -1,18 +1,21 @@
 ﻿using APS.DotNetSDK.Commands.Requests;
 using APS.DotNetSDK.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace APS.DotNetSDK.Tests.Commands.Requests
 {
     public class AuthorizeRequestCommandTests
     {
         private const string FilePathMerchantConfiguration = @"Configuration\MerchantSdkConfiguration.json";
+        private SdkConfigurationDto _sdkConfigurationDto;
+        private  Mock<ILoggerFactory> _loggerMock = new Mock<ILoggerFactory>();
+
         [SetUp]
         public void Setup()
         {
-            LoggingConfiguration loggingConfiguration = new LoggingConfiguration(new ServiceCollection(), @"Logging/Config/SerilogConfig.json", "APS.DotNetSDK");
-
-            SdkConfiguration.Configure(FilePathMerchantConfiguration, loggingConfiguration);
+            SdkConfiguration.Configure(FilePathMerchantConfiguration, _loggerMock.Object);
+            _sdkConfigurationDto = SdkConfiguration.GetAccount("MainAccount");
         }
         [Test]
         public void ValidateMandatoryProperty_AllMandatoryProperty_ReturnsNoError()
@@ -168,6 +171,8 @@ namespace APS.DotNetSDK.Tests.Commands.Requests
             //arrange
             var objectTest = new AuthorizeRequestCommand()
             {
+                AccessCode = _sdkConfigurationDto.AccessCode,
+                MerchantIdentifier = _sdkConfigurationDto.MerchantIdentifier,
                 Language = "TestLanguage",
                 Signature = "TestSignature",
                 MerchantReference = "TestMerchantReference",
@@ -178,7 +183,7 @@ namespace APS.DotNetSDK.Tests.Commands.Requests
 
             //act
             var expectedResult = "{\"command\":\"AUTHORIZATION\",\"amount\":24.3,\"currency\":\"TestCurrency\",\"customer_email\":\"***\"," +
-                "\"app_programming\":\".NET\",\"app_plugin\":\".dotNETSDK\",\"app_plugin_version\":\"v2.0.0\",\"app_ver\":\"1.0.0.0\"," +
+                "\"app_programming\":\".NET\",\"app_plugin\":\".dotNETSDK\",\"app_plugin_version\":\"v2.1.0\",\"app_ver\":\"1.0.0.0\"," +
                 "\"app_framework\":\".NET\",\"access_code\":\"TestAccessCode\",\"merchant_identifier\":\"TestMerchantIdentifier\",\"merchant_reference\":\"TestMerchantReference\"," +
                 "\"language\":\"testlanguage\",\"signature\":\"TestSignature\"}";
 

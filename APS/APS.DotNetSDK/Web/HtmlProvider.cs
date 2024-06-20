@@ -3,19 +3,19 @@ using System.Text;
 using System.Linq;
 using System.Reflection;
 using APS.DotNetSDK.Utils;
-using APS.DotNetSDK.Signature;
 using System.Collections.Generic;
 using APS.DotNetSDK.Configuration;
 using Microsoft.Extensions.Logging;
 using APS.DotNetSDK.Commands.Requests;
-using Microsoft.Extensions.DependencyInjection;
+using APS.Signature;
+using APS.Signature.Utils;
 
 namespace APS.DotNetSDK.Web
 {
     public class HtmlProvider : IHtmlProvider
     {
         private readonly ILogger<HtmlProvider> _logger;
-        private readonly ApsConfiguration _apsConfiguration;
+        private ApsConfiguration _apsConfiguration;
         private readonly SignatureProvider _signatureProvider;
 
         /// <summary>
@@ -26,43 +26,50 @@ namespace APS.DotNetSDK.Web
         {
             SdkConfiguration.Validate();
 
-            _apsConfiguration = new ApsConfiguration(SdkConfiguration.IsTestEnvironment);
-            _logger = SdkConfiguration.ServiceProvider.GetService<ILogger<HtmlProvider>>();
+            _logger = SdkConfiguration.LoggerFactory.CreateLogger<HtmlProvider>();
             _signatureProvider = new SignatureProvider();
         }
 
-        public string GetHtmlForRedirectIntegration(AuthorizeRequestCommand command)
+        public string GetHtmlForRedirectIntegration(AuthorizeRequestCommand command, string accountName = null)
         {
+            var account = GetCommandAccountDetails(command, accountName);
+            _apsConfiguration = new ApsConfiguration(account.IsTestEnvironment);
             var formActionUrl = _apsConfiguration.GetEnvironmentConfiguration().RedirectUrl;
             var redirectFormPostTemplate = _apsConfiguration.GetRedirectFormPostTemplate();
 
-            return BuildHtmlFormPost(command, formActionUrl, redirectFormPostTemplate);
+            return BuildHtmlFormPost(command, formActionUrl, redirectFormPostTemplate, account);
         }
 
-        public string GetHtmlForRedirectIntegration(PurchaseRequestCommand command)
+        public string GetHtmlForRedirectIntegration(PurchaseRequestCommand command, string accountName = null)
         {
+            var account = GetCommandAccountDetails(command, accountName);
+            _apsConfiguration = new ApsConfiguration(account.IsTestEnvironment);
             var formActionUrl = _apsConfiguration.GetEnvironmentConfiguration().RedirectUrl;
             var redirectFormPostTemplate = _apsConfiguration.GetRedirectFormPostTemplate();
 
-            return BuildHtmlFormPost(command, formActionUrl, redirectFormPostTemplate);
+            return BuildHtmlFormPost(command, formActionUrl, redirectFormPostTemplate, account);
         }
 
-        public string GetHtmlTokenizationForStandardIframeIntegration(TokenizationRequestCommand command)
+        public string GetHtmlTokenizationForStandardIframeIntegration(TokenizationRequestCommand command, string accountName = null)
         {
+            var account = GetCommandAccountDetails(command, accountName);
+            _apsConfiguration = new ApsConfiguration(account.IsTestEnvironment);
             var formActionUrl = _apsConfiguration.GetEnvironmentConfiguration().StandardCheckoutActionUrl;
             var iframeFormPostTemplate = _apsConfiguration.GetStandardIframeFormPostTemplate();
 
-            return BuildHtmlFormPost(command, formActionUrl, iframeFormPostTemplate);
+            return BuildHtmlFormPost(command, formActionUrl, iframeFormPostTemplate, account);
         }
 
-        public string GetHtmlTokenizationForCustomIntegration(TokenizationRequestCommand command)
+        public string GetHtmlTokenizationForCustomIntegration(TokenizationRequestCommand command, string accountName = null)
         {
+            var account = GetCommandAccountDetails(command, accountName);
+            _apsConfiguration = new ApsConfiguration(account.IsTestEnvironment);
             var formActionUrl = _apsConfiguration.GetEnvironmentConfiguration().CustomCheckoutActionUrl;
             var customFormPostTemplate = _apsConfiguration.GetCustomFormPostTemplate();
 
             ValidateMandatoryProperties(command);
 
-            command.Signature = CreateSignature(command);
+            command.Signature = CreateSignature(command, account);
 
             var properties = typeof(TokenizationRequestCommand).GetProperties();
 
@@ -74,13 +81,17 @@ namespace APS.DotNetSDK.Web
             return formPostForReturn;
         }
 
-        public string GetJavaScriptToCloseModal()
+        public string GetJavaScriptToCloseModal(string accountName = null)
         {
+            var account = SdkConfiguration.GetAccount(accountName);
+            _apsConfiguration = new ApsConfiguration(account.IsTestEnvironment);
             return _apsConfiguration.GetCloseModalJavaScript();
         }
 
-        public string Handle3dsSecure(string secure3dsUrl = null, bool useModal = false, bool standardCheckout = false)
+        public string Handle3dsSecure(string secure3dsUrl = null, bool useModal = false, bool standardCheckout = false, string accountName = null)
         {
+            var account = SdkConfiguration.GetAccount(accountName);
+            _apsConfiguration = new ApsConfiguration(account.IsTestEnvironment);
             var closeIframe = _apsConfiguration.GetCloseIframeJavaScript();
 
             if (!string.IsNullOrEmpty(secure3dsUrl))
@@ -99,6 +110,7 @@ namespace APS.DotNetSDK.Web
 
             return closeIframe;
         }
+        
 
         private string BuildModalFor3ds(string secure3dsUrl, bool standardCheckout, string closeIframe)
         {
@@ -124,11 +136,20 @@ namespace APS.DotNetSDK.Web
         }
 
         #region private methods
-        private string BuildHtmlFormPost<T>(T command, string formActionUrl, string formPostTemplate) where T : RequestCommand
+        private SdkConfigurationDto GetCommandAccountDetails<TRequest>(TRequest command, string nameAccount = null)
+            where TRequest : RequestCommand
+        {
+            var account = SdkConfiguration.GetAccount(nameAccount);
+            command.AccessCode = account.AccessCode;
+            command.MerchantIdentifier = account.MerchantIdentifier;
+            return account;
+        }
+
+        private string BuildHtmlFormPost<T>(T command, string formActionUrl, string formPostTemplate, SdkConfigurationDto account) where T : RequestCommand
         {
             ValidateMandatoryProperties(command);
 
-            command.Signature = CreateSignature(command);
+            command.Signature = CreateSignature(command, account);
 
             var properties = typeof(T).GetProperties();
 
@@ -138,12 +159,12 @@ namespace APS.DotNetSDK.Web
             return formPostForReturn;
         }
 
-        private string CreateSignature<T>(T command) where T : RequestCommand
+        private string CreateSignature<T>(T command, SdkConfigurationDto account) where T : RequestCommand
         {
             _logger.LogInformation($"Starting signature calculation for [MerchantReference:{command.MerchantReference}]");
             _logger.LogDebug($"Starting signature calculation for [MerchantReference:{command.MerchantReference},RequestObject:{@command.ToAnonymizedJson()}]");
 
-            var signature = _signatureProvider.GetSignature(command, SdkConfiguration.RequestShaPhrase, SdkConfiguration.ShaType);
+            var signature = _signatureProvider.GetSignature(command, account.RequestShaPhrase, account.ShaType);
 
             _logger.LogInformation($"Generated signature for [MerchantReference:{command.MerchantReference},Signature:{signature}]");
             return signature;

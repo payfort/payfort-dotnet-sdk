@@ -1,8 +1,8 @@
 ﻿using System.Text.Json;
-using APS.DotNetSDK.Utils;
 using System.Text.Encodings.Web;
 using System.Text.Json.Serialization;
 using APS.DotNetSDK.Commands.Responses.Installments;
+using APS.Signature.Utils;
 
 namespace APS.DotNetSDK.Commands.Responses
 {

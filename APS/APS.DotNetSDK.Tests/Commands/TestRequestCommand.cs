@@ -1,6 +1,4 @@
 ﻿using APS.DotNetSDK.Commands;
-using APS.DotNetSDK.Configuration;
-using APS.DotNetSDK.Utils;
 using System.Text.Json.Serialization;
 
 namespace APS.DotNetSDK.Tests.Commands
@@ -11,15 +9,13 @@ namespace APS.DotNetSDK.Tests.Commands
 
         public TestRequestCommand()
         {
-            AccessCode = SdkConfiguration.AccessCode;
-            MerchantIdentifier = SdkConfiguration.MerchantIdentifier;
         }
 
         [JsonPropertyName("access_code")]
-        public string? AccessCode { get; protected set; }
+        public string? AccessCode { get; set; }
 
         [JsonPropertyName("merchant_identifier")]
-        public string? MerchantIdentifier { get; protected set; }
+        public string? MerchantIdentifier { get; set; }
 
         [JsonPropertyName("language")]
         public string? Language

@@ -3,11 +3,9 @@ using APS.DotNetSDK.Commands.Responses;
 using APS.DotNetSDK.Configuration;
 using APS.DotNetSDK.Exceptions;
 using APS.DotNetSDK.Service;
-using APS.DotNetSDK.Signature;
 using APS.DotNetSDK.Web.Installments;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Moq;
-using Environment = APS.DotNetSDK.Configuration.Environment;
 
 namespace APS.DotNetSDK.Tests.Web.Installments
 {
@@ -15,15 +13,17 @@ namespace APS.DotNetSDK.Tests.Web.Installments
     {
         private readonly Mock<IApiProxy> _securedApiProxyMock = new();
         private const string FilePathMerchantConfiguration = @"Configuration\MerchantSdkConfiguration.json";
+        private readonly Mock<ILoggerFactory> _loggerFactoryMock = new();
+        private readonly Mock<ILogger<InstallmentsProvider>> _loggerMock = new();
+
         [SetUp]
         public void Setup()
         {
-
-            LoggingConfiguration loggingConfiguration = new LoggingConfiguration(new ServiceCollection(), @"Logging/Config/SerilogConfig.json", "APS.DotNetSDK");
+            _loggerFactoryMock.Setup(x => x.CreateLogger(It.IsAny<string>())).Returns(_loggerMock.Object);
 
             SdkConfiguration.Configure(
                 FilePathMerchantConfiguration,
-                loggingConfiguration);
+                _loggerFactoryMock.Object);
         }
 
         [Test]
