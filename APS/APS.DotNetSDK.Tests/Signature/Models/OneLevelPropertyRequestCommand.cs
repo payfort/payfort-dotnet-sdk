@@ -1,5 +1,4 @@
-﻿using APS.DotNetSDK.Commands;
-using APS.DotNetSDK.Tests.Commands;
+﻿using APS.DotNetSDK.Tests.Commands;
 using System.Text.Json.Serialization;
 
 namespace APS.DotNetSDK.Tests.Signature.Models

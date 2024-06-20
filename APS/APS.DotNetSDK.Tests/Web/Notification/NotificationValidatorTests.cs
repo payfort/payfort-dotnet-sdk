@@ -1,24 +1,22 @@
-﻿using APS.DotNetSDK.Commands.Requests;
-using APS.DotNetSDK.Configuration;
+﻿using APS.DotNetSDK.Configuration;
 using APS.DotNetSDK.Exceptions;
-using APS.DotNetSDK.Signature;
 using APS.DotNetSDK.Web.Notification;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System.Reflection;
 using System.Text;
-using Environment = APS.DotNetSDK.Configuration.Environment;
+using APS.Signature;
 
 namespace APS.DotNetSDK.Tests.Web.Notification
 {
     public class NotificationValidatorTests
     {
         private const string FilePathMerchantConfiguration = @"Configuration\MerchantSdkConfiguration.json";
+        private readonly Mock<ILoggerFactory> _loggerFactoryMock = new();
         private readonly Mock<ILogger<NotificationValidator>> _loggerMock = new();
         private Mock<IFormCollection> _formCollection = new();
         private readonly Mock<HttpRequest> _request = new();
+        private SdkConfigurationDto _sdkConfigurationDto;
 
         [SetUp]
         public void Setup()
@@ -32,9 +30,10 @@ namespace APS.DotNetSDK.Tests.Web.Notification
                 "app_framework"
             });
 
-            LoggingConfiguration loggingConfiguration = new(new ServiceCollection(), @"Logging/Config/SerilogConfig.json", "APS.DotNetSDK");
+            _loggerFactoryMock.Setup(x => x.CreateLogger(It.IsAny<string>())).Returns(_loggerMock.Object);
 
-            SdkConfiguration.Configure(FilePathMerchantConfiguration, loggingConfiguration);
+            SdkConfiguration.Configure(FilePathMerchantConfiguration, _loggerFactoryMock.Object);
+            _sdkConfigurationDto = SdkConfiguration.GetAccount("MainAccount");
         }
 
 
@@ -46,8 +45,8 @@ namespace APS.DotNetSDK.Tests.Web.Notification
             _formCollection.SetupGet(p => p["response_code"]).Returns("00006");
             _formCollection.SetupGet(p => p["signature"])
                 .Returns("b1869e119965f0b56be7d6401964003ce9ab65ed02b6ec2110eb3f94d136bd79");
-            _formCollection.SetupGet(p => p["merchant_identifier"]).Returns(SdkConfiguration.MerchantIdentifier);
-            _formCollection.SetupGet(p => p["access_code"]).Returns(SdkConfiguration.AccessCode);
+            _formCollection.SetupGet(p => p["merchant_identifier"]).Returns(_sdkConfigurationDto.MerchantIdentifier);
+            _formCollection.SetupGet(p => p["access_code"]).Returns(_sdkConfigurationDto.AccessCode);
             _formCollection.SetupGet(p => p["language"]).Returns("en");
             _formCollection.SetupGet(p => p["command"]).Returns("PURCHASE");
             _formCollection.SetupGet(p => p["response_message"]).Returns("Technical problem");
@@ -82,8 +81,8 @@ namespace APS.DotNetSDK.Tests.Web.Notification
                 Assert.That(validationResult.RequestData["amount"], Is.EqualTo("243"));
                 Assert.That(validationResult.RequestData["response_code"], Is.EqualTo("00006"));
                 Assert.That(validationResult.RequestData["signature"], Is.EqualTo("b1869e119965f0b56be7d6401964003ce9ab65ed02b6ec2110eb3f94d136bd79"));
-                Assert.That(validationResult.RequestData["merchant_identifier"], Is.EqualTo(SdkConfiguration.MerchantIdentifier));
-                Assert.That(validationResult.RequestData["access_code"], Is.EqualTo(SdkConfiguration.AccessCode));
+                Assert.That(validationResult.RequestData["merchant_identifier"], Is.EqualTo(_sdkConfigurationDto.MerchantIdentifier));
+                Assert.That(validationResult.RequestData["access_code"], Is.EqualTo(_sdkConfigurationDto.AccessCode));
                 Assert.That(validationResult.RequestData["language"], Is.EqualTo("en"));
                 Assert.That(validationResult.RequestData["command"], Is.EqualTo("PURCHASE"));
                 Assert.That(validationResult.RequestData["response_message"], Is.EqualTo("Technical problem"));
@@ -103,8 +102,8 @@ namespace APS.DotNetSDK.Tests.Web.Notification
             _formCollection.SetupGet(p => p["response_code"]).Returns("00006");
             _formCollection.SetupGet(p => p["signature"])
                 .Returns("1300e9a2ee36a76b458d3bf305ff8db7dd6647e14861bde573c09828729c602b");
-            _formCollection.SetupGet(p => p["merchant_identifier"]).Returns(SdkConfiguration.MerchantIdentifier);
-            _formCollection.SetupGet(p => p["access_code"]).Returns(SdkConfiguration.AccessCode);
+            _formCollection.SetupGet(p => p["merchant_identifier"]).Returns(_sdkConfigurationDto.MerchantIdentifier);
+            _formCollection.SetupGet(p => p["access_code"]).Returns(_sdkConfigurationDto.AccessCode);
             _formCollection.SetupGet(p => p["language"]).Returns("en");
             _formCollection.SetupGet(p => p["command"]).Returns("AUTHORIZATION");
             _formCollection.SetupGet(p => p["response_message"]).Returns("Technical problem");
@@ -135,8 +134,8 @@ namespace APS.DotNetSDK.Tests.Web.Notification
             _formCollection.SetupGet(p => p["merchant_reference"]).Returns("merchant_reference");
             _formCollection.SetupGet(p => p["amount"]).Returns("243");
             _formCollection.SetupGet(p => p["currency"]).Returns("USD");
-            _formCollection.SetupGet(p => p["merchant_identifier"]).Returns(SdkConfiguration.MerchantIdentifier);
-            _formCollection.SetupGet(p => p["access_code"]).Returns(SdkConfiguration.AccessCode);
+            _formCollection.SetupGet(p => p["merchant_identifier"]).Returns(_sdkConfigurationDto.MerchantIdentifier);
+            _formCollection.SetupGet(p => p["access_code"]).Returns(_sdkConfigurationDto.AccessCode);
             _formCollection.SetupGet(p => p["language"]).Returns("en");
             _formCollection.SetupGet(p => p["signature"])
                 .Returns("d36985eaa48b46ab36f10d9c42ed9c977b7eeaf46628789d2804129e327f8569");
@@ -163,8 +162,8 @@ namespace APS.DotNetSDK.Tests.Web.Notification
             _formCollection.SetupGet(p => p["maintenance_reference"]).Returns("maintenance_reference");
             _formCollection.SetupGet(p => p["amount"]).Returns("243");
             _formCollection.SetupGet(p => p["currency"]).Returns("USD");
-            _formCollection.SetupGet(p => p["merchant_identifier"]).Returns(SdkConfiguration.MerchantIdentifier);
-            _formCollection.SetupGet(p => p["access_code"]).Returns(SdkConfiguration.AccessCode);
+            _formCollection.SetupGet(p => p["merchant_identifier"]).Returns(_sdkConfigurationDto.MerchantIdentifier);
+            _formCollection.SetupGet(p => p["access_code"]).Returns(_sdkConfigurationDto.AccessCode);
             _formCollection.SetupGet(p => p["language"]).Returns("en");
             _formCollection.SetupGet(p => p["signature"])
                 .Returns("16edc7836bff2f2177bf62de779b45f437860262a808b7dc53da578d615755cc");
@@ -189,8 +188,8 @@ namespace APS.DotNetSDK.Tests.Web.Notification
             //arrange
             _formCollection.SetupGet(p => p["command"]).Returns("VOID_AUTHORIZATION");
             _formCollection.SetupGet(p => p["merchant_reference"]).Returns("merchant_reference");
-            _formCollection.SetupGet(p => p["merchant_identifier"]).Returns(SdkConfiguration.MerchantIdentifier);
-            _formCollection.SetupGet(p => p["access_code"]).Returns(SdkConfiguration.AccessCode);
+            _formCollection.SetupGet(p => p["merchant_identifier"]).Returns(_sdkConfigurationDto.MerchantIdentifier);
+            _formCollection.SetupGet(p => p["access_code"]).Returns(_sdkConfigurationDto.AccessCode);
             _formCollection.SetupGet(p => p["language"]).Returns("en");
             _formCollection.SetupGet(p => p["signature"])
                 .Returns("ee073e1a786869b88e7668864157f4694451b039d7bdc47704a28c9c16ab14e5");

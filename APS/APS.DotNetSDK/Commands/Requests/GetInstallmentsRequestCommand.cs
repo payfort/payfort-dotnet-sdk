@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using System.Text.Encodings.Web;
-using APS.DotNetSDK.Configuration;
 using System.Text.Json.Serialization;
 
 namespace APS.DotNetSDK.Commands.Requests
@@ -11,15 +10,13 @@ namespace APS.DotNetSDK.Commands.Requests
 
         public GetInstallmentsRequestCommand()
         {
-            AccessCode = SdkConfiguration.AccessCode;
-            MerchantIdentifier = SdkConfiguration.MerchantIdentifier;
         }
 
         [JsonPropertyName("access_code")]
-        public string AccessCode { get; protected set; }
+        public string AccessCode { get; set; }
 
         [JsonPropertyName("merchant_identifier")]
-        public string MerchantIdentifier { get; protected set; }
+        public string MerchantIdentifier { get; set; }
 
         [JsonPropertyName("language")]
         public string Language

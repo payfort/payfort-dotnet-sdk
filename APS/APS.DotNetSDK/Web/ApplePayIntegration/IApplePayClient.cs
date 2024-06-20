@@ -12,6 +12,6 @@ namespace APS.DotNetSDK.Web.ApplePayIntegration
         /// <returns>the ApplePay session response object</returns>
         /// <exception cref="Exception">Get the exception when there is an issue to the payment gateway</exception>
         /// <exception cref="ArgumentException">Get the exception when the provided url is not valid with https scheme</exception>
-        Task<PaymentSessionResponse> RetrieveMerchantSessionAsync(string url);
+        Task<PaymentSessionResponse> RetrieveMerchantSessionAsync(string url, string nameAccount = null);
     }
 }

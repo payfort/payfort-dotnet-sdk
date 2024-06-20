@@ -2,122 +2,146 @@
 using System.IO;
 using System.Text.Json;
 using APS.DotNetSDK.Utils;
-using APS.DotNetSDK.Logging;
-using APS.DotNetSDK.Signature;
+//using APS.DotNetSDK.Signature;
 using APS.DotNetSDK.Exceptions;
-using Microsoft.Extensions.DependencyInjection;
+using APS.Signature;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace APS.DotNetSDK.Configuration
 {
     public static class SdkConfiguration
     {
         private static readonly object LockObject = new object();
-
-        public static bool IsTestEnvironment { get; private set; }
-
-        public static string AccessCode { get; set; }
-
-        public static string MerchantIdentifier { get; set; }
-
-        public static string RequestShaPhrase { get; set; }
-
-        public static string ResponseShaPhrase { get; set; }
-
-        public static ShaType ShaType { get; set; }
-
-        public static ApplePayConfiguration ApplePayConfiguration { get; private set; }
+        public static List<SdkConfigurationDto> AllConfigurations;
+        private static List<SdkJsonConfiguration> AllJsonConfigurations;
 
         public static bool IsConfigured { get; private set; }
 
-        internal static ServiceProvider ServiceProvider { get; set; }
+        public static ILoggerFactory LoggerFactory { get; set; }
 
         /// <summary>
         /// Configure the SDK
         /// </summary>
         /// <param name="filePath">The MerchantSdkConfiguration.json file path</param>
-        /// <param name="loggingConfiguration">The logging configuration</param>
+        /// <param name="loggerFactory"></param>
         /// <param name="applePayConfiguration">The ApplePay configuration</param>
         /// <exception cref="ArgumentNullException">Get the exception when one of the mandatory parameters are null or empty</exception>
-        public static ServiceProvider Configure(
+        public static void Configure(
             string filePath,
-            LoggingConfiguration loggingConfiguration,
+            ILoggerFactory loggerFactory,
             ApplePayConfiguration applePayConfiguration = null)
         {
+
+            AllConfigurations = new List<SdkConfigurationDto>();
+            AllJsonConfigurations = new List<SdkJsonConfiguration>();
+
             lock (LockObject)
             {
+                filePath = filePath.Replace(@"\", Path.DirectorySeparatorChar.ToString());
                 if (!File.Exists(filePath))
                 {
                     throw new SdkConfigurationException("The file \"MerchantSdkConfiguration.json\" is needed for SDK configuration");
                 }
 
                 var jsonContent = FileReader.ReadFromFile(filePath);
-                var merchantConfiguration =
+                var merchantConfigurations =
                     JsonSerializer.Deserialize<MerchantSdkConfiguration>(jsonContent);
 
-                AccessCode = merchantConfiguration?.SdkConfiguration.AccessCode;
-                MerchantIdentifier = merchantConfiguration?.SdkConfiguration.MerchantIdentifier;
-                RequestShaPhrase = merchantConfiguration?.SdkConfiguration.RequestShaPhrase;
-                ResponseShaPhrase = merchantConfiguration?.SdkConfiguration.ResponseShaPhrase;
+                AllJsonConfigurations.Add(merchantConfigurations.SdkConfiguration);
 
-                if (!Enum.TryParse(merchantConfiguration?.SdkConfiguration.ShaTypeAsString, out ShaType resultShaType))
+                if (merchantConfigurations.SubAccountsList != null && merchantConfigurations.SubAccountsList.Any())
                 {
-                    //details
-                    throw new SdkConfigurationException("Please provide one of the shaType \"Sha512\" or \"Sha256\". " +
-                        "Is needed in Sdk Configuration. Please check file \"MerchantSdkConfiguration.json\"");
-                }
-                ShaType = resultShaType;
-
-                if (!Enum.TryParse(merchantConfiguration?.SdkConfiguration.IsTestEnvironmentAsString, out Environment resultEnvironment))
-                {
-                    //details
-                    throw new SdkConfigurationException("Please provide one of IsTestEnvironment \"Test\" or \"Production\". " +
-                        "Is needed in Sdk Configuration. Please check file \"MerchantSdkConfiguration.json\"");
+                    foreach (var merchantConfiguration in merchantConfigurations.SubAccountsList)
+                    {
+                        AllJsonConfigurations.Add(merchantConfiguration);
+                    }
                 }
 
-                IsTestEnvironment = resultEnvironment == Environment.Test;
-
-                if (string.IsNullOrEmpty(merchantConfiguration?.SdkConfiguration.ApplePay?.MerchantIdentifier)
-                    && merchantConfiguration?.SdkConfiguration.ApplePay != null)
+                foreach (var jsonConfiguration in AllJsonConfigurations)
                 {
-                    merchantConfiguration.SdkConfiguration.ApplePay.MerchantIdentifier = merchantConfiguration.SdkConfiguration.MerchantIdentifier;
-                }
+                    var config = new SdkConfigurationDto();
 
-                ApplePayConfiguration = merchantConfiguration?.SdkConfiguration.ApplePay;
 
-                if (merchantConfiguration.SdkConfiguration.ApplePay != null)
-                {
-                    if (!Enum.TryParse(merchantConfiguration.SdkConfiguration.ApplePay?.ShaTypeAsString, out ShaType resultApplePayShaType))
+                    config.AccessCode = jsonConfiguration?.AccessCode;
+                    config.AccountType = jsonConfiguration?.AccountType;
+                    config.MerchantIdentifier = jsonConfiguration?.MerchantIdentifier;
+                    config.RequestShaPhrase = jsonConfiguration?.RequestShaPhrase;
+                    config.ResponseShaPhrase = jsonConfiguration?.ResponseShaPhrase;
+
+                    if (!Enum.TryParse(jsonConfiguration?.ShaTypeAsString, out ShaType resultShaType))
                     {
                         //details
                         throw new SdkConfigurationException("Please provide one of the shaType \"Sha512\" or \"Sha256\". " +
-                                                            "Is needed in Apple Pay Configuration. Please check file \"MerchantSdkConfiguration.json\"");
+                            "Is needed in Sdk Configuration. Please check file \"MerchantSdkConfiguration.json\"");
                     }
+                    config.ShaType = resultShaType;
 
-                    merchantConfiguration.SdkConfiguration.ApplePay.ShaType = resultApplePayShaType;
-                }
-
-                if (applePayConfiguration != null)
-                {
-                    if (applePayConfiguration.SecurityCertificate == null)
+                    if (!Enum.TryParse(jsonConfiguration?.IsTestEnvironmentAsString, out Environment resultEnvironment))
                     {
-                        throw new ArgumentNullException($"SecurityCertificate",
-                            "SecurityCertificate is needed for ApplePay configuration");
+                        //details
+                        throw new SdkConfigurationException("Please provide one of IsTestEnvironment \"Test\" or \"Production\". " +
+                            "Is needed in Sdk Configuration. Please check file \"MerchantSdkConfiguration.json\"");
                     }
 
-                    ApplePayConfiguration.SecurityCertificate = applePayConfiguration?.SecurityCertificate;
+                    config.IsTestEnvironment = resultEnvironment == Environment.Test;
+
+                    if (string.IsNullOrEmpty(jsonConfiguration?.ApplePay?.MerchantIdentifier)
+                        && jsonConfiguration?.ApplePay != null)
+                    {
+                        jsonConfiguration.ApplePay.MerchantIdentifier = jsonConfiguration.MerchantIdentifier;
+                    }
+
+                    config.ApplePayConfiguration = jsonConfiguration?.ApplePay;
+
+                    if (jsonConfiguration.ApplePay != null)
+                    {
+                        if (!Enum.TryParse(jsonConfiguration.ApplePay?.ShaTypeAsString, out ShaType resultApplePayShaType))
+                        {
+                            //details
+                            throw new SdkConfigurationException("Please provide one of the shaType \"Sha512\" or \"Sha256\". " +
+                                                                "Is needed in Apple Pay Configuration. Please check file \"MerchantSdkConfiguration.json\"");
+                        }
+
+                        jsonConfiguration.ApplePay.ShaType = resultApplePayShaType;
+                    }
+
+                    if (applePayConfiguration != null)
+                    {
+                        if (applePayConfiguration.SecurityCertificate == null)
+                        {
+                            throw new ArgumentNullException($"SecurityCertificate",
+                                "SecurityCertificate is needed for ApplePay configuration");
+                        }
+
+                        config.ApplePayConfiguration.SecurityCertificate = applePayConfiguration?.SecurityCertificate;
+                    }
+
+                    ValidateSdkConfiguration(config);
+                    AllConfigurations.Add(config);
                 }
 
-                ValidateSdkConfiguration();
-
-                loggingConfiguration.Validate();
-
-                loggingConfiguration.ServiceCollection
-                    .AddSerilogLogger(loggingConfiguration.JsonLoggingPathConfig, loggingConfiguration.ApplicationName);
-
-                ServiceProvider = loggingConfiguration.ServiceCollection.BuildServiceProvider();
-
-                return ServiceProvider;
+                LoggerFactory = loggerFactory;
+                
             }
+        }
+
+        public static SdkConfigurationDto GetAccount(string nameAccount)
+        {
+            var account = new SdkConfigurationDto();
+            if (nameAccount != null)
+                account = AllConfigurations.Where(x => x.AccountType == nameAccount).FirstOrDefault();
+            else
+                account = AllConfigurations.FirstOrDefault();
+
+            return account;
+        }
+
+        public static void ClearConfiguration()
+        {
+            AllConfigurations.Clear();
+            AllJsonConfigurations.Clear();
         }
 
         internal static void Validate()
@@ -129,9 +153,9 @@ namespace APS.DotNetSDK.Configuration
             }
         }
 
-        internal static void ValidateApplePayConfiguration()
+        internal static void ValidateApplePayConfiguration(SdkConfigurationDto currentAccount)
         {
-            if (ApplePayConfiguration == null)
+            if (currentAccount.ApplePayConfiguration == null)
             {
                 throw new SdkConfigurationException("Sdk Configuration for ApplePay is required. " +
                    "Please check MerchantSdkConfiguration.json file");
@@ -139,31 +163,31 @@ namespace APS.DotNetSDK.Configuration
         }
 
         #region private methods
-        private static void ValidateSdkConfiguration()
+        private static void ValidateSdkConfiguration(SdkConfigurationDto configuration)
         {
-            if (string.IsNullOrEmpty(AccessCode))
+            if (string.IsNullOrEmpty(configuration.AccessCode))
             {
                 throw new ArgumentNullException("AccessCode", "AccessCode is needed for SDK configuration");
             }
 
-            if (string.IsNullOrEmpty(MerchantIdentifier))
+            if (string.IsNullOrEmpty(configuration.MerchantIdentifier))
             {
                 throw new ArgumentNullException("MerchantIdentifier", "MerchantIdentifier is needed for SDK configuration");
             }
 
-            if (string.IsNullOrEmpty(RequestShaPhrase))
+            if (string.IsNullOrEmpty(configuration.RequestShaPhrase))
             {
                 throw new ArgumentNullException("RequestShaPhrase", "RequestShaPhrase is needed for SDK configuration");
             }
 
-            if (string.IsNullOrEmpty(ResponseShaPhrase))
+            if (string.IsNullOrEmpty(configuration.ResponseShaPhrase))
             {
                 throw new ArgumentNullException("ResponseShaPhrase", "ResponseShaPhrase is needed for SDK configuration");
             }
 
-            if (ApplePayConfiguration != null)
+            if (configuration.ApplePayConfiguration != null)
             {
-                ApplePayConfiguration.Validate();
+                configuration.ApplePayConfiguration.Validate();
             }
 
             IsConfigured = true;

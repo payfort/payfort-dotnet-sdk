@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace APS.DotNetSDK.Configuration
 {
@@ -6,5 +7,8 @@ namespace APS.DotNetSDK.Configuration
     {
         [JsonPropertyName("SdkConfiguration")]
         public SdkJsonConfiguration SdkConfiguration { get; set; }
+
+        [JsonPropertyName("SubAccounts")]
+        public List<SdkJsonConfiguration> SubAccountsList { get; set; }
     }
 }

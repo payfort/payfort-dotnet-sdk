@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json.Serialization;
 using System.Security.Cryptography.X509Certificates;
-using APS.DotNetSDK.Signature;
+using APS.Signature;
 
 namespace APS.DotNetSDK.Configuration
 {

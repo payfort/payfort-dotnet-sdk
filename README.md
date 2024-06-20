@@ -31,6 +31,7 @@ We know that payment processing is critical to your business. With this plugin w
 
 | Plugin Version | Release Notes |
 | :---: | :--- |
+| 2.1.0 |   * Signature Calculation is now in a seperate project <br/> * Serilog logger dependency is removed <br/> * Airlines additional request parameters are added <br/> * Merchant configuration file accepts multiple subaccounts <br/> MerchantConfiguration can be selected in runtime| 
 | 2.0.0 |   * Integrated checkout experience options: Redirection, Merchant Page, Hosted Merchant Page, Apple Pay, Installments, Recurring, MOTO, Trusted <br/> * Partial/Full Refund, Single/Multiple Capture and Void events <br/> * Signature calculation and validation <br/> * Check Status as a function <br/> Feedback notification handling| 
 
 ## API Documentation

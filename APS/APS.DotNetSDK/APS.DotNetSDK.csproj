@@ -9,6 +9,7 @@
     <None Remove="Configuration\Modal3DSTemplate.txt" />
     <None Remove="Web\FingerPrintJavaScript.txt" />
     <None Remove="Web\Modal3DSJavascriptTemplate.txt" />
+    <None Remove="Signature\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,19 +22,13 @@
     <EmbeddedResource Include="Web\Modal3DSTemplate.txt">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
-    <PackageReference Include="Serilog" Version="2.10.0" />
-    <PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0" />
-    <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
-    <PackageReference Include="Serilog.Settings.Configuration" Version="3.3.0" />
-    <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
-    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
     <PackageReference Include="System.Text.Json" Version="6.0.6" />
+    <EmbeddedResource Remove="Signature\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,6 +38,17 @@
     <None Update="Configuration\MerchantSdkConfiguration.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\APS.Signature\APS.Signature.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Signature\**" />
+    <Compile Remove="Utils\IgnoreOnSignatureCalculationAttribute.cs" />
+    <Compile Remove="Utils\ReflectionExtensions.cs" />
+    <Compile Remove="Utils\TypeExtensionMethods.cs" />
   </ItemGroup>
 
 </Project>

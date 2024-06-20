@@ -16,5 +16,26 @@
       "MerchantUid": "merchant.com.yourmerchant.identifier from Apple Developer portal",
       "DomainName": "fqdn verified on Apple Developer portal"
     }
-  }
+  },
+  "SubAccounts": [
+    {
+      "AccountType": "Subaccount1",
+      "Environment": "Test",
+      "AccessCode": "testaccesscode",
+      "MerchantIdentifier": "",
+      "RequestShaPhrase": "{]",
+      "ResponseShaPhrase": "",
+      "ShaType": "Sha256",
+      "ApplePay": {
+        "AccessCode": "testaccesscode",
+        "MerchantIdentifier": "",
+        "RequestShaPhrase": "",
+        "ResponseShaPhrase": "",
+        "ShaType": "Sha256",
+        "DisplayName": "Name to be displayed on Payment Sheet",
+        "MerchantUid": "merchant.com.yourmerchant.identifier from Apple Developer portal",
+        "DomainName": "fqdn verified on Apple Developer portal"
+      }
+    }
+  ]
 }

@@ -19,7 +19,7 @@ namespace WebApp.Controllers
                 Language = "en",
                 Amount = 24300,
                 Currency = "AED",
-                CustomerEmail = "test@mail.com",
+                CustomerEmail = "andreea.cuc@endava.com",
                 ReturnUrl = @"https://localhost:7137/Home/Response",
                 TokenName = tokenName,
                 Eci = "MOTO"
@@ -48,7 +48,7 @@ namespace WebApp.Controllers
                 Language = "en",
                 Amount = 24300,
                 Currency = "AED",
-                CustomerEmail = "test@mail.com",
+                CustomerEmail = "andreea.cuc@endava.com",
                 ReturnUrl = @"https://localhost:7137/Home/Response",
                 TokenName = tokenName,
                 Eci = "RECURRING"
@@ -76,12 +76,12 @@ namespace WebApp.Controllers
                 Language = "en",
                 Amount = 24300,
                 Currency = "AED",
-                CustomerEmail = "test@mail.com",
+                CustomerEmail = "andreea.cuc@endava.com",
                 ReturnUrl = @"https://localhost:7137/Home/Response",
                 SecurityCode = "123",
-                CardNumber = "4000000000000001",
-                ExpiryDate = "3505",
-                CardHolderName = "Name",
+                CardNumber = "4005550000000001",
+                ExpiryDate = "2505",
+                CardHolderName = "Andreea",
                 Eci = "ECOMMERCE"
             };
 

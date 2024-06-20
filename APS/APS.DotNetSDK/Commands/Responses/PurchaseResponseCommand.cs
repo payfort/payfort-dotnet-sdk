@@ -6,6 +6,7 @@ using System.Text.Encodings.Web;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using APS.DotNetSDK.AcquirerResponseMessage;
+using APS.Signature.Utils;
 
 namespace APS.DotNetSDK.Commands.Responses
 {

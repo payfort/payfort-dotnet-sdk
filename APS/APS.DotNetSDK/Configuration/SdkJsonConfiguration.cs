@@ -4,6 +4,8 @@ namespace APS.DotNetSDK.Configuration
 {
     public class SdkJsonConfiguration
     {
+        [JsonPropertyName("AccountType")]
+        public string AccountType { get; set; }
         [JsonPropertyName("Environment")]
         public string IsTestEnvironmentAsString { get; set; }
 

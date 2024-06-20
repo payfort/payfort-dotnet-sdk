@@ -1,25 +1,26 @@
-﻿using APS.DotNetSDK.Commands;
-using APS.DotNetSDK.Commands.Requests;
+﻿using APS.DotNetSDK.Commands.Requests;
 using APS.DotNetSDK.Configuration;
 using APS.DotNetSDK.Exceptions;
-using APS.DotNetSDK.Signature;
 using APS.DotNetSDK.Tests.Signature.Models;
-using Microsoft.Extensions.DependencyInjection;
-using Environment = APS.DotNetSDK.Configuration.Environment;
+using APS.Signature;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace APS.DotNetSDK.Tests.Signature
 {
     public class SignatureProviderTests
     {
         private const string FilePathMerchantConfiguration = @"Configuration\MerchantSdkConfiguration.json";
+        private SdkConfigurationDto _sdkConfigurationDto;
+        private readonly Mock<ILoggerFactory> _loggerMock = new Mock<ILoggerFactory>();
         [SetUp]
         public void Setup()
         {
-            LoggingConfiguration loggingConfiguration = new LoggingConfiguration(new ServiceCollection(), @"Logging/Config/SerilogConfig.json", "APS.DotNetSDK");
-
             SdkConfiguration.Configure(
                 FilePathMerchantConfiguration,
-                loggingConfiguration);
+                _loggerMock.Object);
+            _sdkConfigurationDto = SdkConfiguration.GetAccount("MainAccount");
+
         }
 
         [Test]
@@ -30,13 +31,15 @@ namespace APS.DotNetSDK.Tests.Signature
             //arrange
             var objectTest = new OneLevelPropertyRequestCommand()
             {
+                AccessCode = _sdkConfigurationDto.AccessCode,
+                MerchantIdentifier = _sdkConfigurationDto.MerchantIdentifier,
                 Language = "TestLanguage",
                 Signature = "TestSignature"
             };
             var service = new SignatureProvider();
-            
+
             //act
-            var actualResult = service.GetSignature(objectTest, SdkConfiguration.RequestShaPhrase, shaType);
+            var actualResult = service.GetSignature(objectTest, _sdkConfigurationDto.RequestShaPhrase, shaType);
 
             //assert
             Assert.That(actualResult, Is.EqualTo(expectedResult));
@@ -50,13 +53,15 @@ namespace APS.DotNetSDK.Tests.Signature
             //arrange
             var objectTest = new OneLevelPropertyRequestCommand
             {
+                AccessCode = _sdkConfigurationDto.AccessCode,
+                MerchantIdentifier = _sdkConfigurationDto.MerchantIdentifier,
                 Language = null,
                 Signature = "TestSignature"
             };
             var service = new SignatureProvider();
 
             //act
-            var actualResult = service.GetSignature(objectTest, SdkConfiguration.RequestShaPhrase, shaType);
+            var actualResult = service.GetSignature(objectTest, _sdkConfigurationDto.RequestShaPhrase, shaType);
 
             //assert
             Assert.That(actualResult, Is.EqualTo(expectedResult));
@@ -70,52 +75,59 @@ namespace APS.DotNetSDK.Tests.Signature
             //arrange
             var objectTest = new OneLevelPropertyRequestCommand
             {
+                AccessCode = _sdkConfigurationDto.AccessCode,
+                MerchantIdentifier = _sdkConfigurationDto.MerchantIdentifier,
                 Language = "",
                 Signature = "TestSignature"
             };
             var service = new SignatureProvider();
 
             //act
-            var actualResult = service.GetSignature(objectTest, SdkConfiguration.RequestShaPhrase, shaType);
+            var actualResult = service.GetSignature(objectTest, _sdkConfigurationDto.RequestShaPhrase, shaType);
 
             //assert
             Assert.That(actualResult, Is.EqualTo(expectedResult));
         }
 
         [Test]
-        [TestCase("00c75fb04b120e37f61f708f9a4e713bcd1212829cd54c979e2adcf4722d1443", ShaType.Sha256)]
-        [TestCase("d3c85701c355ff88665b5d06fcab6066f4c62788bc4041faa20d6353c262e976f10fe2bd4554bc9e10318892b3c49211a70c68b8b8b1941180c0dcff053d6d1f", ShaType.Sha512)]
+        [TestCase("53c5aa02e0cdf14d59cc2eef557b23bffa33621f5f6faf14d3c215f8d4db1954", ShaType.Sha256)]
+        [TestCase("e60a3600f0230728f2bf8907a0989b8b95aef7c60e7aa563519bf54fb6a371fa8c5a85bee97f57428e177d48037e8ba07b488b658c43323a744f11c9e3ffc927", ShaType.Sha512)]
         public void GetSignature_InputHasTwoLevelsOfProperties_ReturnsCorrectSignature(string expectedResult, ShaType shaType)
         {
             //arrange
             var objectTest = new TwoLevelsPropertyRequestCommand
             {
+                AccessCode = _sdkConfigurationDto.AccessCode,
+                MerchantIdentifier = _sdkConfigurationDto.MerchantIdentifier,
                 Language = "TestLanguage",
                 Signature = "TestSignature",
                 PaymentType = new Payment
                 {
                     PaymentMethod = "TestPaymentMethod",
-                    CardType = "TestCardType"
+                    CardType = "TestCardType",
+                    SecurityCode = 123
                 }
             };
 
             var service = new SignatureProvider();
 
             //act
-            var actualResult = service.GetSignature(objectTest, SdkConfiguration.RequestShaPhrase, shaType);
+            var actualResult = service.GetSignature(objectTest, _sdkConfigurationDto.RequestShaPhrase, shaType);
 
             //assert
             Assert.That(actualResult, Is.EqualTo(expectedResult));
         }
 
         [Test]
-        [TestCase("59cc26e90b9208f95853d84db92dcbd8be659f296dacedf9cad0e3727d3260b3", ShaType.Sha256)]
-        [TestCase("12cc65778db4f2a7184699e5e93bf4ee0d0bce998a729e50e67d36cf543cd9c32d3c5c6f3adfd7cc0e360d64acf97d91076edda588e415928b34dd01a574971e", ShaType.Sha512)]
+        [TestCase("d5daf610089a70484d730f784981842638ce41baea2744496215761894737ae4", ShaType.Sha256)]
+        [TestCase("1846f9c7de1192ba5a8bf6bdabc6b7c768659726e040b3504f34fdbe5c8629cd038f4ec18e80035537140706e51375f5cbcbf60a1ad4e6df68b71a297680d4a4", ShaType.Sha512)]
         public void GetSignature_InputHasTwoLevelsOfPropertiesWithOneEmptyProperty_ReturnsCorrectSignature(string expectedResult, ShaType shaType)
         {
             //arrange
             var objectTest = new TwoLevelsPropertyRequestCommand
             {
+                AccessCode = _sdkConfigurationDto.AccessCode,
+                MerchantIdentifier = _sdkConfigurationDto.MerchantIdentifier,
                 Language = "TestLanguage",
                 Signature = "TestSignature",
                 PaymentType = new Payment
@@ -128,20 +140,22 @@ namespace APS.DotNetSDK.Tests.Signature
             var service = new SignatureProvider();
 
             //act
-            var actualResult = service.GetSignature(objectTest, SdkConfiguration.RequestShaPhrase, shaType);
+            var actualResult = service.GetSignature(objectTest, _sdkConfigurationDto.RequestShaPhrase, shaType);
 
             //assert
             Assert.That(actualResult, Is.EqualTo(expectedResult));
         }
 
         [Test]
-        [TestCase("f977b51d87dfa6e608f51585fa683a8410cec73f3ce1f4dcf77c513731363c1d", ShaType.Sha256)]
-        [TestCase("90e17b7b6ed041632a333f179b93a9bb3feef4bd9cf97b3e2a612a707666c19a6cd7b0c29ea8170c39edfa36a87c1fd3b5861906f9a0c88814ded40387c772e6", ShaType.Sha512)]
+        [TestCase("8605fcee68061bb5921dd96535fc87a850502822a9881da6de4b194055a36e0a", ShaType.Sha256)]
+        [TestCase("5e14da732f6efb8ca6712a1e52bc6c11d13f7a10881ef27d83e48cb73b37625fe2543c48136eb51c062aa1495f19e1ce302dfb559f1a38b5e5e305ed686b94fe", ShaType.Sha512)]
         public void GetSignature_InputHasTwoLevelsOfPropertiesWithOneIntProperty_ReturnsCorrectSignature(string expectedResult, ShaType shaType)
         {
             //arrange
             var objectTest = new TwoLevelsPropertyRequestCommand
             {
+                AccessCode = _sdkConfigurationDto.AccessCode,
+                MerchantIdentifier = _sdkConfigurationDto.MerchantIdentifier,
                 Language = "TestLanguage",
                 Signature = "TestSignature",
                 PaymentType = new Payment
@@ -155,20 +169,22 @@ namespace APS.DotNetSDK.Tests.Signature
             var service = new SignatureProvider();
 
             //act
-            var actualResult = service.GetSignature(objectTest, SdkConfiguration.RequestShaPhrase, shaType);
+            var actualResult = service.GetSignature(objectTest, _sdkConfigurationDto.RequestShaPhrase, shaType);
 
             //assert
             Assert.That(actualResult, Is.EqualTo(expectedResult));
         }
 
         [Test]
-        [TestCase("59cc26e90b9208f95853d84db92dcbd8be659f296dacedf9cad0e3727d3260b3", ShaType.Sha256)]
-        [TestCase("12cc65778db4f2a7184699e5e93bf4ee0d0bce998a729e50e67d36cf543cd9c32d3c5c6f3adfd7cc0e360d64acf97d91076edda588e415928b34dd01a574971e", ShaType.Sha512)]
+        [TestCase("d5daf610089a70484d730f784981842638ce41baea2744496215761894737ae4", ShaType.Sha256)]
+        [TestCase("1846f9c7de1192ba5a8bf6bdabc6b7c768659726e040b3504f34fdbe5c8629cd038f4ec18e80035537140706e51375f5cbcbf60a1ad4e6df68b71a297680d4a4", ShaType.Sha512)]
         public void GetSignature_InputHasTwoLevelsOfPropertiesWithOneNullProperty_ReturnsCorrectSignature(string expectedResult, ShaType shaType)
         {
             //arrange
             var objectTest = new TwoLevelsPropertyRequestCommand
             {
+                AccessCode = _sdkConfigurationDto.AccessCode,
+                MerchantIdentifier = _sdkConfigurationDto.MerchantIdentifier,
                 Language = "TestLanguage",
                 Signature = "TestSignature",
                 PaymentType = new Payment
@@ -181,20 +197,22 @@ namespace APS.DotNetSDK.Tests.Signature
             var service = new SignatureProvider();
 
             //act
-            var actualResult = service.GetSignature(objectTest, SdkConfiguration.RequestShaPhrase, shaType);
+            var actualResult = service.GetSignature(objectTest, _sdkConfigurationDto.RequestShaPhrase, shaType);
 
             //assert
             Assert.That(actualResult, Is.EqualTo(expectedResult));
         }
 
         [Test]
-        [TestCase("ac9f38a968a06d319715d431fe9ac1440a2493ea6e2e49904edb82dc117b102f", ShaType.Sha256)]
-        [TestCase("695bc5c39310f6dfbebdab42ecb1906b8ecda2ec9e8221d26f7b5f17584c22a7b99ea42e8dcb11c510a4d15c0b60e0bef362b7e1c55c1deaee87cb4aa6477e0e", ShaType.Sha512)]
+        [TestCase("7c0ec9171ed177d07039a3cb4eb4a63608189ef3ad0ae2abb755476aede1c062", ShaType.Sha256)]
+        [TestCase("81359ca20e847587537aa263e269795c9af84e9421874561c9aeaf18d63376ca47664a036a9eecb0c3a8f2c4dc1ca4c1d0eaa53c25306b08ec2fc71b874fc653", ShaType.Sha512)]
         public void GetSignature_InputHasTwoLevelsOfPropertiesWithCollection_ReturnsCorrectSignature(string expectedResult, ShaType shaType)
         {
             //arrange
             var objectTest = new TwoLevelsPropertyRequestCommandWithCollection
             {
+                AccessCode = _sdkConfigurationDto.AccessCode,
+                MerchantIdentifier = _sdkConfigurationDto.MerchantIdentifier,
                 Language = "TestLanguage",
                 Signature = "TestSignature",
                 PaymentType = new List<Payment>
@@ -215,7 +233,7 @@ namespace APS.DotNetSDK.Tests.Signature
             var service = new SignatureProvider();
 
             //act
-            var actualResult = service.GetSignature(objectTest, SdkConfiguration.RequestShaPhrase, shaType);
+            var actualResult = service.GetSignature(objectTest, _sdkConfigurationDto.RequestShaPhrase, shaType);
 
             //assert
             Assert.That(actualResult, Is.EqualTo(expectedResult));
@@ -223,13 +241,15 @@ namespace APS.DotNetSDK.Tests.Signature
 
 
         [Test]
-        [TestCase("2be30945cea02d0d3bd496a889513e0e67b4fbbcc00c0e8cf453be8ef79e430a", ShaType.Sha256)]
-        [TestCase("93e81666b6b4a0ae2d409c760d8c7e48a54fc1abb8cc2fec4561454416107a8333dbb48eb3874557412def490c6154cb9da4fc4edf592289791e16866eb3a3a1", ShaType.Sha512)]
+        [TestCase("94ea2c089166b2969313c63b3f15bb6a3e223bb5b92c0e54e948e1bc60b83809", ShaType.Sha256)]
+        [TestCase("82f0f046bab28fa41267ec88cf7c983d1f13201616042c1948e43a73e9f2e261340f223b49a80701081cb53d5d8ebabe1fcb381eb71c0dd6208ec738ee12c95a", ShaType.Sha512)]
         public void GetSignature_InputHasTwoLevelsOfPropertiesWithCollectionWithOneEmptyProperty_ReturnsCorrectSignature(string expectedResult, ShaType shaType)
         {
             //arrange
             var objectTest = new TwoLevelsPropertyRequestCommandWithCollection
             {
+                AccessCode = _sdkConfigurationDto.AccessCode,
+                MerchantIdentifier = _sdkConfigurationDto.MerchantIdentifier,
                 Language = "TestLanguage",
                 Signature = "TestSignature",
                 PaymentType = new List<Payment>
@@ -250,20 +270,22 @@ namespace APS.DotNetSDK.Tests.Signature
             var service = new SignatureProvider();
 
             //act
-            var actualResult = service.GetSignature(objectTest, SdkConfiguration.RequestShaPhrase, shaType);
+            var actualResult = service.GetSignature(objectTest, _sdkConfigurationDto.RequestShaPhrase, shaType);
 
             //assert
             Assert.That(actualResult, Is.EqualTo(expectedResult));
         }
 
         [Test]
-        [TestCase("2be30945cea02d0d3bd496a889513e0e67b4fbbcc00c0e8cf453be8ef79e430a", ShaType.Sha256)]
-        [TestCase("93e81666b6b4a0ae2d409c760d8c7e48a54fc1abb8cc2fec4561454416107a8333dbb48eb3874557412def490c6154cb9da4fc4edf592289791e16866eb3a3a1", ShaType.Sha512)]
+        [TestCase("94ea2c089166b2969313c63b3f15bb6a3e223bb5b92c0e54e948e1bc60b83809", ShaType.Sha256)]
+        [TestCase("82f0f046bab28fa41267ec88cf7c983d1f13201616042c1948e43a73e9f2e261340f223b49a80701081cb53d5d8ebabe1fcb381eb71c0dd6208ec738ee12c95a", ShaType.Sha512)]
         public void GetSignature_InputHasTwoLevelsOfPropertiesWithCollectionWithOneNullProperty_ReturnsCorrectSignature(string expectedResult, ShaType shaType)
         {
             //arrange
             var objectTest = new TwoLevelsPropertyRequestCommandWithCollection
             {
+                AccessCode = _sdkConfigurationDto.AccessCode,
+                MerchantIdentifier = _sdkConfigurationDto.MerchantIdentifier,
                 Language = "TestLanguage",
                 Signature = "TestSignature",
                 PaymentType = new List<Payment>
@@ -284,13 +306,14 @@ namespace APS.DotNetSDK.Tests.Signature
             var service = new SignatureProvider();
 
             //act
-            var actualResult = service.GetSignature(objectTest, SdkConfiguration.RequestShaPhrase, shaType);
+            var actualResult = service.GetSignature(objectTest, _sdkConfigurationDto.RequestShaPhrase, shaType);
 
             //assert
             Assert.That(actualResult, Is.EqualTo(expectedResult));
         }
 
         [Test]
+        [Ignore("Now supports more that two levels of json")]
         [TestCase("Only two levels of reference types are allowed for signature calculation.", ShaType.Sha256)]
         [TestCase("Only two levels of reference types are allowed for signature calculation.", ShaType.Sha512)]
         public void GetSignature_InputHasThreeLevelsOfPropertiesWithCollection_ReturnsCorrectSignature(string expectedResult, ShaType shaType)
@@ -298,6 +321,8 @@ namespace APS.DotNetSDK.Tests.Signature
             //arrange
             var objectTest = new ThreeLevelsPropertyRequestCommand
             {
+                AccessCode = _sdkConfigurationDto.AccessCode,
+                MerchantIdentifier = _sdkConfigurationDto.MerchantIdentifier,
                 Language = "TestLanguage",
                 Signature = "TestSignature",
                 CustomerDetail = new Customer()
@@ -319,7 +344,7 @@ namespace APS.DotNetSDK.Tests.Signature
 
             //act
             //assert
-            var actualException = Assert.Throws<SignatureException>(() => service.GetSignature(objectTest, SdkConfiguration.RequestShaPhrase, shaType));
+            var actualException = Assert.Throws<SignatureException>(() => service.GetSignature(objectTest, _sdkConfigurationDto.RequestShaPhrase, shaType));
             Assert.That(actualException.Message, Is.EqualTo(expectedResult));
         }
 
@@ -331,6 +356,8 @@ namespace APS.DotNetSDK.Tests.Signature
             //arrange
             var objectTest = new OneLevelPropertyRequestCommand
             {
+                AccessCode = _sdkConfigurationDto.AccessCode,
+                MerchantIdentifier = _sdkConfigurationDto.MerchantIdentifier,
                 Language = "TestLanguage",
                 Signature = "TestSignature",
                 ZBank = "Banca Transilvania",
@@ -339,47 +366,51 @@ namespace APS.DotNetSDK.Tests.Signature
             var service = new SignatureProvider();
 
             //act
-            var actualResult = service.GetSignature(objectTest, SdkConfiguration.RequestShaPhrase, shaType);
+            var actualResult = service.GetSignature(objectTest, _sdkConfigurationDto.RequestShaPhrase, shaType);
 
             //assert
             Assert.That(actualResult, Is.EqualTo(expectedResult));
         }
 
         [Test]
-        [TestCase("91378d427e279fbf4dc81e87c59655b9f25553f09ef9dd2d444853bb2b46b881", ShaType.Sha256)]
-        [TestCase("69906e0c214a10b929df06ce146f5d0e126c6cb365231b459cc00385251839044bd10bd1575dc4b19022fcc363c44d6c3d5efb3137295dc692724f126898c47d", ShaType.Sha512)]
+        [TestCase("ff1172905d076377006b8581f2f55261d8545c9e81c678081f385ef23be40187", ShaType.Sha256)]
+        [TestCase("6457ad9811a35336b548da51e7ecb6d6c52d3086d3dde5dcd50d7fad89827a0a1e29fc1c9a20be7928c3d63732706118949059092037fd53defb080cb42cc083", ShaType.Sha512)]
         public void GetSignature_AuthorizeRequestCommand_ReturnsCorrectSignature(string expectedResult, ShaType shaType)
         {
             //arrange
             var objectTest = new AuthorizeRequestCommand
             {
+                AccessCode = _sdkConfigurationDto.AccessCode,
+                MerchantIdentifier = _sdkConfigurationDto.MerchantIdentifier,
                 Language = "TestLanguage",
                 Signature = "TestSignature"
             };
             var service = new SignatureProvider();
 
             //act
-            var actualResult = service.GetSignature(objectTest, SdkConfiguration.RequestShaPhrase, shaType);
-
+            var actualResult = service.GetSignature(objectTest, _sdkConfigurationDto.RequestShaPhrase, shaType);
+            
             //assert
             Assert.That(actualResult, Is.EqualTo(expectedResult));
         }
 
         [Test]
-        [TestCase("a450f20c83c1c7b4576f253041907223ff7e376585175d70896dfa547ca6c401", ShaType.Sha256)]
-        [TestCase("09f67e4b8936f53c7c33ba91dbdc4e5cb3c2a0dc31ad4fb016e09dd5e0d14155553982f05fb317566901d8b6c36544c3061f62b87517d0040d006c3feaef57d5", ShaType.Sha512)]
+        [TestCase("be88e74d52cbcdf90612c2b560a9a68444760e070d829fb0df93ef68caf339a9", ShaType.Sha256)]
+        [TestCase("b96c16eecb81aec38fd931b011ac009f946b5ccf5ec23f97a26bbbe812b60dfc8b06dcf88dbbe08439f0bc68de4e2223e99d4830d0ede8c46c9b9a70d8dfc747", ShaType.Sha512)]
         public void GetSignature_PurchaseRequestCommand_ReturnsCorrectSignature(string expectedResult, ShaType shaType)
         {
             //arrange
             var objectTest = new PurchaseRequestCommand
             {
+                AccessCode = _sdkConfigurationDto.AccessCode,
+                MerchantIdentifier = _sdkConfigurationDto.MerchantIdentifier,
                 Language = "TestLanguage",
                 Signature = "TestSignature"
             };
             var service = new SignatureProvider();
 
             //act
-            var actualResult = service.GetSignature(objectTest, SdkConfiguration.RequestShaPhrase, shaType);
+            var actualResult = service.GetSignature(objectTest, _sdkConfigurationDto.RequestShaPhrase, shaType);
 
             //assert
             Assert.That(actualResult, Is.EqualTo(expectedResult));

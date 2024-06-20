@@ -1,11 +1,12 @@
 ﻿using System.Web;
 using System.Text.Json;
-using APS.DotNetSDK.Utils;
+using APS.Signature.Utils;
 using APS.DotNetSDK.Exceptions;
 using System.Text.Encodings.Web;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using APS.DotNetSDK.AcquirerResponseMessage;
+using APS.DotNetSDK.Utils;
 
 namespace APS.DotNetSDK.Commands.Responses
 {

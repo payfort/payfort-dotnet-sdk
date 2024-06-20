@@ -7,7 +7,7 @@ namespace APS.DotNetSDK.Commands.Requests.ApplePay
     public class ApplePayPurchaseRequestCommand : PurchaseRequestCommand
     {
         public ApplePayPurchaseRequestCommand(PurchaseRequestCommand purchaseRequestCommand, 
-            ApplePayRequestCommand applePayRequestCommand)
+            ApplePayRequestCommand applePayRequestCommand, SdkConfigurationDto account)
         {
             applePayRequestCommand.ValidateMandatoryProperties();
 
@@ -29,8 +29,8 @@ namespace APS.DotNetSDK.Commands.Requests.ApplePay
 
             AppleSignature = applePayRequestCommand.Data.PaymentData.Signature;
 
-            AccessCode = SdkConfiguration.ApplePayConfiguration.AccessCode;
-            MerchantIdentifier = SdkConfiguration.ApplePayConfiguration.MerchantIdentifier;
+            AccessCode = account.ApplePayConfiguration.AccessCode;
+            MerchantIdentifier = account.ApplePayConfiguration.MerchantIdentifier;
             Language = purchaseRequestCommand.Language;
             MerchantReference = purchaseRequestCommand.MerchantReference;
             Amount = purchaseRequestCommand.Amount;

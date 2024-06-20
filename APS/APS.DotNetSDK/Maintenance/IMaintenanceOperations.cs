@@ -16,7 +16,7 @@ namespace APS.DotNetSDK.Maintenance
         /// <returns>The authorize response received from the provider</returns>
         /// <exception cref="Exceptions.SignatureException">Get the exception when signature mismatch</exception>
         /// <exception cref="Exception">Get the exception when there is an issue to the payment gateway</exception>
-        Task<AuthorizeResponseCommand> AuthorizeAsync(AuthorizeRequestCommand command);
+        Task<AuthorizeResponseCommand> AuthorizeAsync(AuthorizeRequestCommand command, string nameAccount = null);
 
         /// <summary>
         /// An operation that allows the Merchant to make a purchase
@@ -26,7 +26,7 @@ namespace APS.DotNetSDK.Maintenance
         /// <exception cref="Exceptions.SignatureException">Get the exception when signature mismatch</exception>
         /// <exception cref="Exception">Get the exception when there is an issue to the payment gateway</exception>
         /// <exception cref="Exception">Get the exception when there is an issue to the payment gateway</exception>
-        Task<PurchaseResponseCommand> PurchaseAsync(PurchaseRequestCommand command);
+        Task<PurchaseResponseCommand> PurchaseAsync(PurchaseRequestCommand command, string nameAccount = null);
 
         /// <summary>
         /// An operation that allows the Merchant to make an authorization with ApplePay
@@ -38,7 +38,7 @@ namespace APS.DotNetSDK.Maintenance
         /// <exception cref="Exceptions.SdkConfigurationException">Get the exception when SDK configuration for Apple Pay is not send</exception>
         /// <exception cref="Exception">Get the exception when there is an issue to the payment gateway</exception>
         Task<ApplePayAuthorizeResponseCommand> AuthorizeAsync(AuthorizeRequestCommand authorizeRequestCommand,
-            ApplePayRequestCommand applePayRequestCommand);
+            ApplePayRequestCommand applePayRequestCommand, string nameAccount = null);
 
         /// <summary>
         /// An operation that allows the Merchant to make a purchase with ApplePay
@@ -49,7 +49,7 @@ namespace APS.DotNetSDK.Maintenance
         /// <exception cref="Exceptions.SignatureException">Get the exception when signature mismatch</exception>
         /// <exception cref="Exceptions.SdkConfigurationException">Get the exception when SDK configuration for Apple Pay is not send</exception>
         Task<ApplePayPurchaseResponseCommand> PurchaseAsync(PurchaseRequestCommand purchaseRequestCommand, 
-            ApplePayRequestCommand applePayRequestCommand);
+            ApplePayRequestCommand applePayRequestCommand, string nameAccount = null);
 
         /// <summary>
         /// An operation that allows the Merchant to capture the authorized amount to their account.
@@ -58,7 +58,7 @@ namespace APS.DotNetSDK.Maintenance
         /// <returns>The capture response received from the provider</returns>
         /// <exception cref="Exceptions.SignatureException">Get the exception when signature mismatch</exception>
         /// <exception cref="Exception">Get the exception when there is an issue to the payment gateway</exception>
-        Task<CaptureResponseCommand> CaptureAsync(CaptureRequestCommand command);
+        Task<CaptureResponseCommand> CaptureAsync(CaptureRequestCommand command, string nameAccount = null);
 
         /// <summary>
         /// An operation that allows the Merchant to cancel the authorized amount after a successful authorize request
@@ -67,7 +67,7 @@ namespace APS.DotNetSDK.Maintenance
         /// <returns>The void response received from the provider</returns>
         /// <exception cref="Exceptions.SignatureException">Get the exception when signature mismatch</exception>
         /// <exception cref="Exception">Get the exception when there is an issue to the payment gateway</exception>
-        Task<VoidResponseCommand> VoidAsync(VoidRequestCommand command);
+        Task<VoidResponseCommand> VoidAsync(VoidRequestCommand command, string nameAccount = null);
 
         /// <summary>
         /// An operation that allows the Merchant to return the entire amount of a transaction, or to return a part of it
@@ -76,7 +76,7 @@ namespace APS.DotNetSDK.Maintenance
         /// <returns>The refund response received from the provider</returns>
         /// <exception cref="Exceptions.SignatureException">Get the exception when signature mismatch</exception>
         /// <exception cref="Exception">Get the exception when there is an issue to the payment gateway</exception>
-        Task<RefundResponseCommand> RefundAsync(RefundRequestCommand command);
+        Task<RefundResponseCommand> RefundAsync(RefundRequestCommand command, string nameAccount = null);
 
         /// <summary>
         /// An operation that allows the Merchant to check the status of a transaction
@@ -85,6 +85,6 @@ namespace APS.DotNetSDK.Maintenance
         /// <returns>The check status response received from the provider</returns>
         /// <exception cref="Exceptions.SignatureException">Get the exception when signature mismatch</exception>
         /// <exception cref="Exception">Get the exception when there is an issue to the payment gateway</exception>
-        Task<CheckStatusResponseCommand> CheckStatusAsync(CheckStatusRequestCommand command);
+        Task<CheckStatusResponseCommand> CheckStatusAsync(CheckStatusRequestCommand command, string nameAccount = null);
     }
 }

@@ -4,7 +4,6 @@ using System.Web;
 using System.Linq;
 using System.Text.Json;
 using APS.DotNetSDK.Utils;
-using APS.DotNetSDK.Signature;
 using APS.DotNetSDK.Exceptions;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
@@ -12,7 +11,7 @@ using APS.DotNetSDK.Configuration;
 using Microsoft.Extensions.Logging;
 using APS.DotNetSDK.Commands.Responses;
 using APS.DotNetSDK.AcquirerResponseMessage;
-using Microsoft.Extensions.DependencyInjection;
+using APS.Signature;
 
 namespace APS.DotNetSDK.Web.Notification
 {
@@ -31,7 +30,7 @@ namespace APS.DotNetSDK.Web.Notification
             _signatureValidator = signatureValidator;
             _acquirerResponseMapping = new AcquirerResponseMapping();
 
-            _logger = SdkConfiguration.ServiceProvider.GetService<ILogger<NotificationValidator>>();
+            _logger = SdkConfiguration.LoggerFactory.CreateLogger<NotificationValidator>();
         }
 
         /// <summary>
@@ -42,21 +41,23 @@ namespace APS.DotNetSDK.Web.Notification
         {
         }
 
-        public NotificationValidationResponse Validate(HttpRequest httpRequest)
+        public NotificationValidationResponse Validate(HttpRequest httpRequest, string accountName = null)
         {
+            var account = SdkConfiguration.GetAccount(accountName);
             switch (httpRequest.Method)
             {
                 case "POST":
-                    return ValidateFormPost(httpRequest.Form);
+                    return ValidateFormPost(httpRequest.Form, account);
                 case "GET":
-                    return ValidateQueryString(httpRequest.QueryString);
+                    return ValidateQueryString(httpRequest.QueryString, account);
                 default:
                     throw new InvalidNotification("Notification should be GET or POST");
             }
         }
 
-        public NotificationValidationResponse ValidateAsyncNotification(HttpRequest httpRequest)
+        public NotificationValidationResponse ValidateAsyncNotification(HttpRequest httpRequest, string accountName = null)
         {
+            var account = SdkConfiguration.GetAccount(accountName);
             var stream = new StreamReader(httpRequest.Body);
             var body = stream.ReadToEndAsync().Result;
 
@@ -67,7 +68,7 @@ namespace APS.DotNetSDK.Web.Notification
             _logger.LogDebug(
                 $"Started to validate the async notification received from payment gateway:[{@ToAnonymized(keyValuePairDictionary)}]");
 
-            var isValid = ValidateRequest(keyValuePairDictionary);
+            var isValid = ValidateRequest(keyValuePairDictionary, account);
 
             _logger.LogDebug($"Validation is {isValid} for validate request");
 
@@ -79,7 +80,7 @@ namespace APS.DotNetSDK.Web.Notification
         }
 
         #region  private methods
-        private NotificationValidationResponse ValidateFormPost(IFormCollection formCollection)
+        private NotificationValidationResponse ValidateFormPost(IFormCollection formCollection, SdkConfigurationDto account)
         {
             var keyValuePairDictionary =
                 formCollection.Keys.ToDictionary<string, string, string>(key =>
@@ -90,7 +91,7 @@ namespace APS.DotNetSDK.Web.Notification
             _logger.LogDebug(
                 $"Started to validate the Form Post notification received from payment gateway:[{@ToAnonymized(keyValuePairDictionary)}]");
 
-            var isValid = ValidateRequest(keyValuePairDictionary);
+            var isValid = ValidateRequest(keyValuePairDictionary, account);
 
             _logger.LogDebug($"Validation is {isValid} for validate request");
 
@@ -100,8 +101,8 @@ namespace APS.DotNetSDK.Web.Notification
                 RequestData = keyValuePairDictionary
             };
         }
-        
-        private NotificationValidationResponse ValidateQueryString(QueryString queryString)
+
+        private NotificationValidationResponse ValidateQueryString(QueryString queryString, SdkConfigurationDto account)
         {
             if (!queryString.HasValue)
             {
@@ -115,7 +116,7 @@ namespace APS.DotNetSDK.Web.Notification
 
             _logger.LogDebug($"Started to validate the Get notification received from payment gateway:[{@ToAnonymized(keyValuePairDictionary)}]");
 
-            var isValid = ValidateRequest(keyValuePairDictionary);
+            var isValid = ValidateRequest(keyValuePairDictionary, account);
 
             _logger.LogDebug($"Validation is {isValid} for validate request");
 
@@ -168,11 +169,11 @@ namespace APS.DotNetSDK.Web.Notification
             return anonymizedDictionary.JoinElements(",");
         }
 
-        private bool ValidateRequest(IDictionary<string, string> keyValuePairDictionary)
+        private bool ValidateRequest(IDictionary<string, string> keyValuePairDictionary, SdkConfigurationDto account)
         {
             var responseCommand = BuildResponse(keyValuePairDictionary);
 
-            return ValidateResponseSignature(responseCommand);
+            return ValidateResponseSignature(responseCommand, account);
         }
 
         private ResponseCommandWithNotification BuildResponse(IDictionary<string, string> keyValuePairDictionary)
@@ -231,12 +232,12 @@ namespace APS.DotNetSDK.Web.Notification
             return null;
         }
 
-        private bool ValidateResponseSignature(ResponseCommandWithNotification responseCommand)
+        private bool ValidateResponseSignature(ResponseCommandWithNotification responseCommand, SdkConfigurationDto account)
         {
             _logger.LogDebug(
                 $"Validate signature for response received from APS [MerchantReference:{responseCommand.MerchantReference},FortId:{responseCommand.FortId}]");
 
-            var isResponseSignatureValid = _signatureValidator.ValidateSignature(responseCommand, SdkConfiguration.ResponseShaPhrase, SdkConfiguration.ShaType,
+            var isResponseSignatureValid = _signatureValidator.ValidateSignature(responseCommand, account.ResponseShaPhrase, account.ShaType,
                        responseCommand.Signature);
 
             _logger.LogDebug(

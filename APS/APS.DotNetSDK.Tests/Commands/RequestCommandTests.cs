@@ -1,24 +1,20 @@
-﻿using APS.DotNetSDK.Commands;
-using APS.DotNetSDK.Commands.Requests;
-using APS.DotNetSDK.Configuration;
-using APS.DotNetSDK.Signature;
-using Microsoft.Extensions.DependencyInjection;
-using Environment = APS.DotNetSDK.Configuration.Environment;
+﻿using APS.DotNetSDK.Configuration;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace APS.DotNetSDK.Tests.Commands
 {
     public class RequestCommandTests
     {
         private const string FilePathMerchantConfiguration = @"Configuration\MerchantSdkConfiguration.json";
+        private Mock<ILoggerFactory> _loggerFactory = new Mock<ILoggerFactory>();
         [SetUp]
         public void Setup()
         {
-
-            LoggingConfiguration loggingConfiguration = new LoggingConfiguration(new ServiceCollection(), @"Logging/Config/SerilogConfig.json", "APS.DotNetSDK");
-
+            
             SdkConfiguration.Configure(
                 FilePathMerchantConfiguration,
-                loggingConfiguration);
+                _loggerFactory.Object);
         }
 
         [Test]

@@ -1,26 +1,24 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 using APS.DotNetSDK.Configuration;
-using APS.DotNetSDK.Signature;
 using APS.DotNetSDK.Web.ApplePayIntegration;
-using Microsoft.Extensions.DependencyInjection;
-using Environment = APS.DotNetSDK.Configuration.Environment;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace APS.DotNetSDK.Tests.Web.ApplePayIntegration
 {
     public class JavascriptProviderTests
     {
-        private const string FilePath = @"Web\ApplePayIntegration\Certificate.pem";
+        private readonly string _filePath = $"Web{ Path.DirectorySeparatorChar.ToString() }ApplePayIntegration{ Path.DirectorySeparatorChar.ToString() }Certificate.pem";
         private const string FilePathMerchantConfiguration = @"Configuration\MerchantSdkConfiguration.json";
 
-        private readonly LoggingConfiguration _loggingConfiguration = new LoggingConfiguration(new ServiceCollection(),
-            @"Logging/Config/SerilogConfig.json", "APS.DotNetSDK");
+        private Mock<ILoggerFactory> _loggerFactory = new Mock<ILoggerFactory>();
         [SetUp]
         public void Setup()
         {
             SdkConfiguration.Configure(FilePathMerchantConfiguration,
-                _loggingConfiguration,
+                _loggerFactory.Object,
                 new ApplePayConfiguration(
-                    new X509Certificate2(FilePath)));
+                    new X509Certificate2(_filePath)));
         }
 
         [Test]
@@ -43,7 +41,7 @@ namespace APS.DotNetSDK.Tests.Web.ApplePayIntegration
                 currencyCode, supportedNetworks);
 
             //assert
-            var expectedJavascriptContent = await File.ReadAllTextAsync(@"Web\ApplePayIntegration\ExpectedJavascriptWithoutSupportedCountries.txt");
+            var expectedJavascriptContent = await File.ReadAllTextAsync($"Web{ Path.DirectorySeparatorChar.ToString() }ApplePayIntegration{ Path.DirectorySeparatorChar.ToString() }ExpectedJavascriptWithoutSupportedCountries.txt");
 
             Assert.That(actualJavascriptContent, Is.EqualTo(expectedJavascriptContent));
         }
@@ -71,7 +69,7 @@ namespace APS.DotNetSDK.Tests.Web.ApplePayIntegration
                 currencyCode, supportedNetworks, supportedCountries);
 
             //assert
-            var expectedJavascriptContent = await File.ReadAllTextAsync(@"Web\ApplePayIntegration\ExpectedJavascriptWithSupportedCountries.txt");
+            var expectedJavascriptContent = await File.ReadAllTextAsync($"Web{ Path.DirectorySeparatorChar.ToString() }ApplePayIntegration{ Path.DirectorySeparatorChar.ToString() }ExpectedJavascriptWithSupportedCountries.txt");
 
             Assert.That(actualJavascriptContent, Is.EqualTo(expectedJavascriptContent));
         }

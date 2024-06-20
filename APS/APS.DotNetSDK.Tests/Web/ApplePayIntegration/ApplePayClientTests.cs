@@ -3,7 +3,7 @@ using APS.DotNetSDK.Configuration;
 using APS.DotNetSDK.Exceptions;
 using APS.DotNetSDK.Service;
 using APS.DotNetSDK.Web.ApplePayIntegration;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Moq;
 using static NUnit.Framework.Assert;
 
@@ -12,14 +12,15 @@ namespace APS.DotNetSDK.Tests.Web.ApplePayIntegration
     public class ApplePayClientTests
     {
         private const string FilePathMerchantConfiguration = @"Configuration\MerchantSdkConfiguration.json";
-        private const string FilePath = @"Web\ApplePayIntegration\Certificate.pem";
+        private readonly string _filePath = $"Web{Path.DirectorySeparatorChar.ToString()}ApplePayIntegration{Path.DirectorySeparatorChar.ToString()}Certificate.pem";
         private const string BaseUrl = "https://apple-pay-gateway-cert.apple.com";
         private const string RequestUri = "/paymentservices/paymentSession";
 
         private readonly Mock<IApiProxy> _apiProxyMock = new();
 
-        private readonly LoggingConfiguration _loggingConfiguration = new LoggingConfiguration(new ServiceCollection(),
-            @"Logging/Config/SerilogConfig.json", "APS.DotNetSDK");
+        private readonly Mock<ILoggerFactory> _loggerFactoryMock = new();
+        private readonly Mock<ILogger<ApplePayClient>> _loggerMock = new();
+
 
         [Test]
         public async Task RetrieveMerchantSession_ReturnsSession_InputIsValid()
@@ -40,12 +41,14 @@ namespace APS.DotNetSDK.Tests.Web.ApplePayIntegration
                 Retries = 0
             };
 
+            _loggerFactoryMock.Setup(x => x.CreateLogger(It.IsAny<string>())).Returns(_loggerMock.Object);
+
             _apiProxyMock.Setup(x => x.PostAsync<PaymentSessionRequest, PaymentSessionResponse>(
                     It.IsAny<PaymentSessionRequest>(), BaseUrl, RequestUri))
                 .ReturnsAsync(paymentSessionResponse).Verifiable();
 
-            var certificate = new X509Certificate2(await File.ReadAllBytesAsync(FilePath));
-            SdkConfiguration.Configure(FilePathMerchantConfiguration, _loggingConfiguration,
+            var certificate = new X509Certificate2(await File.ReadAllBytesAsync(_filePath));
+            SdkConfiguration.Configure(FilePathMerchantConfiguration, _loggerFactoryMock.Object,
                 new ApplePayConfiguration(
                     certificate));
 
@@ -65,8 +68,8 @@ namespace APS.DotNetSDK.Tests.Web.ApplePayIntegration
         {
             string urlWithInvalidHttpScheme = "http://test.com";
 
-            var certificate = new X509Certificate2(await File.ReadAllBytesAsync(FilePath));
-            SdkConfiguration.Configure(FilePathMerchantConfiguration, _loggingConfiguration,
+            var certificate = new X509Certificate2(await File.ReadAllBytesAsync(_filePath));
+            SdkConfiguration.Configure(FilePathMerchantConfiguration, _loggerFactoryMock.Object,
                 new ApplePayConfiguration(
                     certificate));
 
@@ -81,8 +84,8 @@ namespace APS.DotNetSDK.Tests.Web.ApplePayIntegration
         {
             string urlWithInvalidHttpScheme = "bow-wow";
 
-            var certificate = new X509Certificate2(await File.ReadAllBytesAsync(FilePath));
-            SdkConfiguration.Configure(FilePathMerchantConfiguration, _loggingConfiguration,
+            var certificate = new X509Certificate2(await File.ReadAllBytesAsync(_filePath));
+            SdkConfiguration.Configure(FilePathMerchantConfiguration, _loggerFactoryMock.Object,
                 new ApplePayConfiguration(
                     certificate));
 
@@ -96,8 +99,9 @@ namespace APS.DotNetSDK.Tests.Web.ApplePayIntegration
         public void RetrieveMerchantSession_ThrowsError_ApplePayIsNotConfigured()
         {
             string testFilePath = @"Configuration\MerchantSdkConfigurationWithApplePayMissing.json";
+            SdkConfiguration.ClearConfiguration();
             //arrange
-            SdkConfiguration.Configure(testFilePath, _loggingConfiguration);
+            SdkConfiguration.Configure(testFilePath, _loggerFactoryMock.Object);
 
             //act
             //assert

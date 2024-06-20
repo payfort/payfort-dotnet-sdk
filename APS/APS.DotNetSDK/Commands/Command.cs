@@ -1,4 +1,4 @@
-﻿using APS.DotNetSDK.Utils;
+﻿using APS.Signature.Utils;
 using System.Text.Json.Serialization;
 
 namespace APS.DotNetSDK.Commands

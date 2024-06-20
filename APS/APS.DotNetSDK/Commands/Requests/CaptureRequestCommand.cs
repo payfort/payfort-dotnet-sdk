@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Text.Json;
 using System.Text.Encodings.Web;
-using APS.DotNetSDK.Configuration;
 using System.Text.Json.Serialization;
+using APS.DotNetSDK.Commands.Requests.Airlines;
 
 namespace APS.DotNetSDK.Commands.Requests
 {
@@ -10,8 +10,6 @@ namespace APS.DotNetSDK.Commands.Requests
     {
         public CaptureRequestCommand()
         {
-            AccessCode = SdkConfiguration.AccessCode;
-            MerchantIdentifier = SdkConfiguration.MerchantIdentifier;
         }
 
         [JsonPropertyName("command")]
@@ -28,6 +26,9 @@ namespace APS.DotNetSDK.Commands.Requests
 
         [JsonPropertyName("order_description")]
         public string Description { get; set; }
+        
+        [JsonPropertyName("airline_data")]
+        public AirlineData AirlineData { get; set; }
 
         public override void ValidateMandatoryProperties()
         {

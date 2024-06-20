@@ -1,0 +1,27 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/dotnetsdk-aps
+/.vs
+/APS/.vs
+/APS/APS.DotNetSDK/obj/Debug/netstandard2.0
+/APS/APS.DotNetSDK/obj/Release/netstandard2.0
+/APS/APS.DotNetSDK/obj
+/APS/APS.DotNetSDK/bin/Debug/netstandard2.0
+/APS/APS.DotNetSDK.Tests/bin/Debug/net6.0
+/APS/APS.DotNetSDK.Tests/obj
+/APS/APS.sln.DotSettings.user
+/APS/APS.DotNetSDK/bin/Release/netstandard2.0
+/APS/APS.DotNetSDK.Tests/bin/Release/net6.0
+/APSTestApplication/WebApp/bin/Debug/net6.0
+/APSTestApplication/WebApp/obj
+/APS/APS.Signature/bin
+/APS/APS.Signature/obj
+/APS/APS.Signature/bin/Debug/netstandard2.0
+/APSTestApplication/APSTestApplication.sln.DotSettings.user
+/APSTestApplication/.vs
+/*.zip
+/*/.idea
+/.idea/
+.DS_Store

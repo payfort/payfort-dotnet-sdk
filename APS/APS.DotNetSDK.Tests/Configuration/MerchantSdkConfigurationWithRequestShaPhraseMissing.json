@@ -1,6 +1,7 @@
 {
   "SdkConfiguration": {
     "Environment": "Test",
+    "AccountType": "MainAccount",
     "AccessCode": "TestAccessCode",
     "MerchantIdentifier": "TestMerchantIdentifier",
     "ResponseShaPhrase": "PASS",

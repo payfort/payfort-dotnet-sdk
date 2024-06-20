@@ -23,6 +23,12 @@ namespace APS.DotNetSDK.Commands.Responses
         [JsonPropertyName("order_description")]
         public string Description { get; set; }
 
+        [JsonPropertyName("acquirer_response_code")]
+        public string AcquirerResponseCode { get; set; }        
+        
+        [JsonPropertyName("acquirer_response_message")]
+        public string AcquirerResponseMessage { get; set; }
+
         public override void BuildNotificationCommand(IDictionary<string, string> dictionaryObject)
         {
             if (!dictionaryObject.Keys.Contains(CommandKey))
@@ -59,7 +65,8 @@ namespace APS.DotNetSDK.Commands.Responses
             Status = responseCommand.Status;
             ReconciliationReference = responseCommand.ReconciliationReference;
             ProcessorResponseCode = responseCommand.ProcessorResponseCode;
-
+            AcquirerResponseCode = responseCommand.AcquirerResponseCode;
+            AcquirerResponseMessage = responseCommand.AcquirerResponseMessage;
             Amount = responseCommand.Amount;
             Currency = responseCommand.Currency;
             Description = responseCommand.Description;
@@ -74,7 +81,6 @@ namespace APS.DotNetSDK.Commands.Responses
                 AccessCode = this.AccessCode,
                 MerchantIdentifier = this.MerchantIdentifier,
                 Language = this.Language,
-
                 MerchantReference = this.MerchantReference,
                 FortId = this.FortId,
                 ResponseCode = this.ResponseCode,
@@ -82,7 +88,8 @@ namespace APS.DotNetSDK.Commands.Responses
                 Status = this.Status,
                 ProcessorResponseCode = this.ProcessorResponseCode,
                 ReconciliationReference = this.ReconciliationReference,
-
+                AcquirerResponseCode = this.AcquirerResponseCode,
+                AcquirerResponseMessage = this.AcquirerResponseMessage,
                 Amount = this.Amount,
                 Currency = this.Currency,
                 Description = this.Description

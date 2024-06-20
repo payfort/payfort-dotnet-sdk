@@ -43,17 +43,17 @@ namespace APS.DotNetSDK.Tests.Commands.Responses
                 {"merchant_identifier", "TestMerchantIdentifier" },
                 {"language", "TestLanguage"},
                 {"signature", "TestSignature"},
-
                 {"response_message", "TestResponseMessage"},
                 {"response_code", "TestResponseCode"},
                 {"status", "TestStatus"},
-
                 {"command", "CAPTURE" },
                 {"merchant_reference", "TestMerchantReference"},
                 {"amount", "24.3"},
                 {"currency", "TestCurrency"},
                 {"fort_id", "TestFortId"},
                 {"order_description", "TestOrderDescription"},
+                {"acquirer_response_code","TestAcquirerResponseCode"},
+                {"acquirer_response_message","TestAcquirerResponseMessage"}
             };
 
             //act

@@ -1,9 +1,8 @@
 ﻿using APS.DotNetSDK.Commands.Requests;
 using APS.DotNetSDK.Commands.Requests.ApplePay;
 using APS.DotNetSDK.Configuration;
-using APS.DotNetSDK.Signature;
-using Microsoft.Extensions.DependencyInjection;
-using Environment = APS.DotNetSDK.Configuration.Environment;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 
 namespace APS.DotNetSDK.Tests.Commands.Requests.ApplePay
@@ -11,13 +10,14 @@ namespace APS.DotNetSDK.Tests.Commands.Requests.ApplePay
     public class ApplePayAuthorizeRequestCommandTests
     {
         private const string FilePathMerchantConfiguration = @"Configuration\MerchantSdkConfiguration.json";
-        private LoggingConfiguration _loggingConfiguration = new LoggingConfiguration(new ServiceCollection(),
-            @"Logging/Config/SerilogConfig.json", "APS.DotNetSDK");
+        private SdkConfigurationDto _sdkConfigurationDto;
+        private Mock<ILoggerFactory> _loggerFactory = new Mock<ILoggerFactory>();
 
         [SetUp]
         public void Setup()
         {
-            SdkConfiguration.Configure(FilePathMerchantConfiguration, _loggingConfiguration);
+            SdkConfiguration.Configure(FilePathMerchantConfiguration, _loggerFactory.Object);
+            _sdkConfigurationDto = SdkConfiguration.GetAccount("MainAccount");
         }
 
         [Test]
@@ -58,7 +58,7 @@ namespace APS.DotNetSDK.Tests.Commands.Requests.ApplePay
             };
 
             var applePayAuthorizeRequestCommand =
-                new ApplePayAuthorizeRequestCommand(authorizeRequestCommand, applePayRequestCommand);
+                new ApplePayAuthorizeRequestCommand(authorizeRequestCommand, applePayRequestCommand, _sdkConfigurationDto);
             Assert.Multiple(() =>
             {
                 Assert.That(applePayAuthorizeRequestCommand.AppleData,
@@ -103,7 +103,7 @@ namespace APS.DotNetSDK.Tests.Commands.Requests.ApplePay
             };
 
             Assert.Throws<ArgumentNullException>(() =>
-                new ApplePayAuthorizeRequestCommand(new AuthorizeRequestCommand(), applePayRequestCommand));
+                new ApplePayAuthorizeRequestCommand(new AuthorizeRequestCommand(), applePayRequestCommand, _sdkConfigurationDto));
         }
 
         [Test]
@@ -118,7 +118,7 @@ namespace APS.DotNetSDK.Tests.Commands.Requests.ApplePay
             };
 
             Assert.Throws<ArgumentNullException>(() =>
-                new ApplePayAuthorizeRequestCommand(new AuthorizeRequestCommand(), applePayRequestCommand));
+                new ApplePayAuthorizeRequestCommand(new AuthorizeRequestCommand(), applePayRequestCommand, _sdkConfigurationDto));
         }
 
         [Test]
@@ -136,7 +136,7 @@ namespace APS.DotNetSDK.Tests.Commands.Requests.ApplePay
             };
 
             Assert.Throws<ArgumentNullException>(() =>
-                new ApplePayAuthorizeRequestCommand(new AuthorizeRequestCommand(), applePayRequestCommand));
+                new ApplePayAuthorizeRequestCommand(new AuthorizeRequestCommand(), applePayRequestCommand, _sdkConfigurationDto));
         }
 
         [Test]
@@ -159,7 +159,7 @@ namespace APS.DotNetSDK.Tests.Commands.Requests.ApplePay
             };
 
             Assert.Throws<ArgumentNullException>(() =>
-                new ApplePayAuthorizeRequestCommand(new AuthorizeRequestCommand(), applePayRequestCommand));
+                new ApplePayAuthorizeRequestCommand(new AuthorizeRequestCommand(), applePayRequestCommand, _sdkConfigurationDto));
         }
 
         [Test]
@@ -182,7 +182,7 @@ namespace APS.DotNetSDK.Tests.Commands.Requests.ApplePay
             };
 
             Assert.Throws<ArgumentNullException>(() =>
-                new ApplePayAuthorizeRequestCommand(new AuthorizeRequestCommand(), applePayRequestCommand));
+                new ApplePayAuthorizeRequestCommand(new AuthorizeRequestCommand(), applePayRequestCommand, _sdkConfigurationDto));
         }
 
         [Test]
@@ -205,7 +205,7 @@ namespace APS.DotNetSDK.Tests.Commands.Requests.ApplePay
             };
 
             Assert.Throws<ArgumentNullException>(() =>
-                new ApplePayAuthorizeRequestCommand(new AuthorizeRequestCommand(), applePayRequestCommand));
+                new ApplePayAuthorizeRequestCommand(new AuthorizeRequestCommand(), applePayRequestCommand, _sdkConfigurationDto));
         }
 
         [Test]
@@ -229,7 +229,7 @@ namespace APS.DotNetSDK.Tests.Commands.Requests.ApplePay
             };
 
             Assert.Throws<ArgumentNullException>(() =>
-                new ApplePayAuthorizeRequestCommand(new AuthorizeRequestCommand(), applePayRequestCommand));
+                new ApplePayAuthorizeRequestCommand(new AuthorizeRequestCommand(), applePayRequestCommand, _sdkConfigurationDto));
         }
 
         [Test]
@@ -254,7 +254,7 @@ namespace APS.DotNetSDK.Tests.Commands.Requests.ApplePay
             };
 
             Assert.Throws<ArgumentNullException>(() =>
-                new ApplePayAuthorizeRequestCommand(new AuthorizeRequestCommand(), applePayRequestCommand));
+                new ApplePayAuthorizeRequestCommand(new AuthorizeRequestCommand(), applePayRequestCommand, _sdkConfigurationDto));
         }
 
         [Test]
@@ -281,7 +281,7 @@ namespace APS.DotNetSDK.Tests.Commands.Requests.ApplePay
             };
 
             Assert.Throws<ArgumentNullException>(() =>
-                new ApplePayAuthorizeRequestCommand(new AuthorizeRequestCommand(), applePayRequestCommand));
+                new ApplePayAuthorizeRequestCommand(new AuthorizeRequestCommand(), applePayRequestCommand, _sdkConfigurationDto));
 
         }
 
@@ -314,7 +314,7 @@ namespace APS.DotNetSDK.Tests.Commands.Requests.ApplePay
             };
 
             Assert.Throws<ArgumentNullException>(() =>
-                new ApplePayAuthorizeRequestCommand(new AuthorizeRequestCommand(), applePayRequestCommand));
+                new ApplePayAuthorizeRequestCommand(new AuthorizeRequestCommand(), applePayRequestCommand, _sdkConfigurationDto));
 
         }
 
@@ -348,7 +348,7 @@ namespace APS.DotNetSDK.Tests.Commands.Requests.ApplePay
             };
 
             Assert.Throws<ArgumentNullException>(() =>
-                new ApplePayAuthorizeRequestCommand(new AuthorizeRequestCommand(), applePayRequestCommand));
+                new ApplePayAuthorizeRequestCommand(new AuthorizeRequestCommand(), applePayRequestCommand, _sdkConfigurationDto));
 
         }
 
@@ -382,7 +382,7 @@ namespace APS.DotNetSDK.Tests.Commands.Requests.ApplePay
             };
 
             Assert.Throws<ArgumentNullException>(() =>
-                new ApplePayAuthorizeRequestCommand(new AuthorizeRequestCommand(), applePayRequestCommand));
+                new ApplePayAuthorizeRequestCommand(new AuthorizeRequestCommand(), applePayRequestCommand, _sdkConfigurationDto));
         }
     }
 }

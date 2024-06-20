@@ -12,10 +12,12 @@ namespace APS.DotNetSDK.Web.ApplePayIntegration
         private static readonly string JavascriptTemplateFile = $@"Configuration{Path.DirectorySeparatorChar}ApplePayJavascriptTemplate.txt";
 
         public string GetJavaScriptForApplePayIntegration(string ajaxSessionValidationUrl, string ajaxCommandUrl, string countryCode,
-            string currencyCode, IEnumerable<string> supportedNetworks, IEnumerable<string> supportedCountries = null)
+            string currencyCode, IEnumerable<string> supportedNetworks, IEnumerable<string> supportedCountries = null, string nameAccount = null)
         {
+            var account = SdkConfiguration.GetAccount(nameAccount);
+
             SdkConfiguration.Validate();
-            SdkConfiguration.ValidateApplePayConfiguration();
+            SdkConfiguration.ValidateApplePayConfiguration(account);
 
             if (string.IsNullOrEmpty(ajaxSessionValidationUrl))
             {
@@ -75,7 +77,7 @@ namespace APS.DotNetSDK.Web.ApplePayIntegration
                 builder.Replace("[SupportedCountries]", string.Empty);
             }
 
-            builder.Replace("[DisplayName]", SdkConfiguration.ApplePayConfiguration.DisplayName);
+            builder.Replace("[DisplayName]", account.ApplePayConfiguration.DisplayName);
 
             return builder.ToString();
         }

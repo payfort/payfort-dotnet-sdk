@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APS.DotNetSDK", "APS.DotNet
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APS.DotNetSDK.Tests", "APS.DotNetSDK.Tests\APS.DotNetSDK.Tests.csproj", "{E9F265BF-EDA8-4F08-B3C3-00FA8081B46E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APS.Signature", "APS.Signature\APS.Signature.csproj", "{2DF496D0-701C-4B96-A729-3D8875117439}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{E9F265BF-EDA8-4F08-B3C3-00FA8081B46E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9F265BF-EDA8-4F08-B3C3-00FA8081B46E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9F265BF-EDA8-4F08-B3C3-00FA8081B46E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DF496D0-701C-4B96-A729-3D8875117439}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DF496D0-701C-4B96-A729-3D8875117439}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DF496D0-701C-4B96-A729-3D8875117439}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DF496D0-701C-4B96-A729-3D8875117439}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

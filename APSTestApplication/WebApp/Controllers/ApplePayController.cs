@@ -62,7 +62,7 @@ namespace WebApp.Controllers
                 MerchantReference = _configuration.GetSection("SdkConfig:MerchantReference").Value,
                 Amount = 100,
                 Currency = "AED",
-                CustomerEmail = "test@mail.com",
+                CustomerEmail = "andreea.cuc@endava.com",
                 Language = "en",
                 ReturnUrl = _configuration.GetSection("SdkConfig:ReturnUrl").Value
             };

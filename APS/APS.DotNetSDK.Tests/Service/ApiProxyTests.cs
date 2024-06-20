@@ -2,11 +2,9 @@
 using APS.DotNetSDK.Commands.Responses;
 using APS.DotNetSDK.Configuration;
 using APS.DotNetSDK.Service;
-using APS.DotNetSDK.Signature;
-using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System.Text.Json;
-using Environment = APS.DotNetSDK.Configuration.Environment;
+using Microsoft.Extensions.Logging;
 
 namespace APS.DotNetSDK.Tests.Service
 {
@@ -14,20 +12,21 @@ namespace APS.DotNetSDK.Tests.Service
     {
         private readonly Mock<IHttpClientWrapper> _httpClientWrapperMock = new();
         private const string FilePathMerchantConfiguration = @"Configuration\MerchantSdkConfiguration.json";
+        private Mock<ILoggerFactory> _loggerFactory = new Mock<ILoggerFactory>();
         [SetUp]
         public void Setup()
         {
-            LoggingConfiguration loggingConfiguration = new LoggingConfiguration(new ServiceCollection(), @"Logging/Config/SerilogConfig.json", "APS.DotNetSDK");
-
             SdkConfiguration.Configure(
                 FilePathMerchantConfiguration,
-                loggingConfiguration);
+                _loggerFactory.Object);
         }
         [Test]
         public async Task PostAsync_InputIsValid_IsSuccessful()
         {
             var requestCommand = new CheckStatusRequestCommand
             {
+                AccessCode = "TestAccessCode",
+                MerchantIdentifier = "TestMerchantIdentifier",
                 MerchantReference = "MerchantReference",
                 Language = "en"
             };

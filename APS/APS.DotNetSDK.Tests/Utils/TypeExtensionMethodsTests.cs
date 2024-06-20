@@ -1,5 +1,5 @@
 ﻿using APS.DotNetSDK.Commands;
-using APS.DotNetSDK.Utils;
+using APS.Signature.Utils;
 
 namespace APS.DotNetSDK.Tests.Utils
 {

@@ -86,7 +86,7 @@ namespace WebApp.Controllers
                     Amount = 24300,
                     Currency = "AED",
                     TokenName = webResponse.tokenName,
-                    CustomerEmail = "test@mail.com",
+                    CustomerEmail = "andreea.cuc@endava.com",
                     Language = "en",
                     ReturnUrl = @"https://localhost:7137/Home/Response",
                     CustomerIp = "172.254.12.5",
@@ -136,7 +136,7 @@ namespace WebApp.Controllers
                     Amount = 243000,
                     Currency = "AED",
                     TokenName = webResponse.tokenName,
-                    CustomerEmail = "test@mail.com",
+                    CustomerEmail = "andreea.cuc@endava.com",
                     Language = "en",
                     ReturnUrl = @"https://localhost:7137/Home/Response",
 
