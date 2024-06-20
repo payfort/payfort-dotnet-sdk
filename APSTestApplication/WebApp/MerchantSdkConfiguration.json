@@ -1,39 +1,40 @@
 {
   "SdkConfiguration": {
     "Environment": "Test",
-    "AccessCode": "4Q5o0XRX8YGyRnH1mcns",
-    "MerchantIdentifier": "bYqNmale",
-    "RequestShaPhrase": "37UjQp4FxjibXoinc3reuq{]",
-    "ResponseShaPhrase": "94wzeEkanf.EBiihz3QcFI)#",
+    "AccessCode": "testaccesscode",
+    "MerchantIdentifier": "",
+    "RequestShaPhrase": "{]",
+    "ResponseShaPhrase": "",
     "ShaType": "Sha256",
     "ApplePay": {
-      "AccessCode": "4yyoUrilpc0Hs7wolpcy",
-      "MerchantIdentifier": "0d60670d",
-      "RequestShaPhrase": "51eEqWYeqelEZcmR6NCV63?}",
-      "ResponseShaPhrase": "96tbct7.alQKAF/JeanDSn({",
+      "AccessCode": "testaccesscode",
+      "MerchantIdentifier": "",
+      "RequestShaPhrase": "",
+      "ResponseShaPhrase": "",
       "ShaType": "Sha256",
-      "DisplayName": "APS",
-      "MerchantUid": "merchant.com.amazonpaymentservices.test",
-      "DomainName": "paytest.online"
+      "DisplayName": "Name to be displayed on Payment Sheet",
+      "MerchantUid": "merchant.com.yourmerchant.identifier from Apple Developer portal",
+      "DomainName": "fqdn verified on Apple Developer portal"
     }
   },
   "SubAccounts": [
     {
       "AccountType": "Subaccount1",
       "Environment": "Test",
-      "AccessCode": "TestAccessCode",
-      "MerchantIdentifier": "TestMerchantIdentifier",
-      "ResponseShaPhrase": "PASS",
-      "RequestShaPhrase": "PASS",
+      "AccessCode": "testaccesscode",
+      "MerchantIdentifier": "",
+      "RequestShaPhrase": "{]",
+      "ResponseShaPhrase": "",
       "ShaType": "Sha256",
       "ApplePay": {
-        "AccessCode": "TestAccessCode",
-        "ResponseShaPhrase": "PASS",
-        "RequestShaPhrase": "PASS",
+        "AccessCode": "testaccesscode",
+        "MerchantIdentifier": "",
+        "RequestShaPhrase": "",
+        "ResponseShaPhrase": "",
         "ShaType": "Sha256",
-        "DisplayName": "DisplayName",
-        "MerchantUid": "MerchantUid",
-        "DomainName": "DomainName"
+        "DisplayName": "Name to be displayed on Payment Sheet",
+        "MerchantUid": "merchant.com.yourmerchant.identifier from Apple Developer portal",
+        "DomainName": "fqdn verified on Apple Developer portal"
       }
     }
   ]
