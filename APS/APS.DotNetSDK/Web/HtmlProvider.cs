@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using APS.DotNetSDK.Utils;
 using System.Collections.Generic;
+using System.Net;
 using APS.DotNetSDK.Configuration;
 using Microsoft.Extensions.Logging;
 using APS.DotNetSDK.Commands.Requests;
@@ -192,7 +193,10 @@ namespace APS.DotNetSDK.Web
                     continue;
                 }
 
-                hiddenFieldsFormPost.Append($"<input type='hidden' name='{jsonPropertyName}' value=\"{propertyValue}\">");
+                // FIX: HTML-encode both name and value to prevent XSS
+                var encodedName = WebUtility.HtmlEncode(jsonPropertyName);
+                var encodedValue = WebUtility.HtmlEncode(propertyValue.ToString());
+                hiddenFieldsFormPost.Append($"<input type='hidden' name='{encodedName}' value=\"{encodedValue}\">");
             }
 
             return hiddenFieldsFormPost.ToString().Trim();
