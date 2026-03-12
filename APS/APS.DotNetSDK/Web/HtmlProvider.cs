@@ -5,6 +5,7 @@ using System.Reflection;
 using APS.DotNetSDK.Utils;
 using System.Collections.Generic;
 using System.Net;
+using System.Text.RegularExpressions;
 using APS.DotNetSDK.Configuration;
 using Microsoft.Extensions.Logging;
 using APS.DotNetSDK.Commands.Requests;
@@ -97,13 +98,16 @@ namespace APS.DotNetSDK.Web
 
             if (!string.IsNullOrEmpty(secure3dsUrl))
             {
+                var sanitizedUrl = ValidateAndSanitizeUrl(secure3dsUrl);
+
                 var stringBuilder = new StringBuilder();
                 if (useModal)
                 {
-                    return BuildModalFor3ds(secure3dsUrl, standardCheckout, closeIframe);
+                    return BuildModalFor3ds(sanitizedUrl, standardCheckout, closeIframe);
                 }
 
-                stringBuilder.Append($"<script>window.parent.location.href = '{secure3dsUrl}';</script>");
+                var jsEncodedUrl = JavaScriptStringEncode(sanitizedUrl);
+                stringBuilder.Append($"<script>window.parent.location.href = '{jsEncodedUrl}';</script>");
                 stringBuilder.Append(closeIframe);
 
                 return stringBuilder.ToString();
@@ -238,6 +242,9 @@ namespace APS.DotNetSDK.Web
                 .GetEmbeddedResourceContent("APS.DotNetSDK.Web.Modal3DSTemplate.txt");
             _logger.LogDebug($"Read template from file {modalFileText}");
 
+            // URL scheme validation is now handled by ValidateAndSanitizeUrl
+            // called in Handle3dsSecure before this method is reached.
+            // Keep URI structure validation as defense-in-depth.
             var result = Uri.TryCreate(secure3dsUrl, UriKind.Absolute, out _);
             if (result == false)
             {
@@ -247,7 +254,9 @@ namespace APS.DotNetSDK.Web
             _logger.LogDebug("Started to build the string for modal content");
             var builder = new StringBuilder(modalFileText);
 
-            builder.Replace("[IframeSource]", secure3dsUrl);
+            // HTML-encode the URL for safe insertion into the iframe src attribute
+            var htmlEncodedUrl = WebUtility.HtmlEncode(secure3dsUrl);
+            builder.Replace("[IframeSource]", htmlEncodedUrl);
 
             return builder.ToString();
         }
@@ -268,18 +277,101 @@ namespace APS.DotNetSDK.Web
             stringBuilder.Append("var elemDiv = document.createElement('div');");
 
             var modalContent = GetModalContent(secure3dsUrl);
-            stringBuilder.Append($"elemDiv.innerHTML='{modalContent.Trim()}';");
+            // JS-encode the modal HTML content for safe insertion into a JS string literal
+            var jsEncodedModalContent = JavaScriptStringEncode(modalContent.Trim());
+            stringBuilder.Append($"elemDiv.innerHTML='{jsEncodedModalContent}';");
 
             stringBuilder.Append("var script = document.createElement('script');");
 
             var modalJavaScriptContent = GetModalJavaScript();
-            stringBuilder.Append($"script.innerHTML='{modalJavaScriptContent.Trim()}';");
+            // JS-encode the JavaScript content for safe insertion into a JS string literal
+            var jsEncodedScriptContent = JavaScriptStringEncode(modalJavaScriptContent.Trim());
+            stringBuilder.Append($"script.innerHTML='{jsEncodedScriptContent}';");
 
             stringBuilder.Append("elemDiv.appendChild(script);");
             stringBuilder.Append("window.parent.document.body.appendChild(elemDiv);</script>");
             stringBuilder.Append(closeIframe);
 
             return stringBuilder;
+        }
+
+        /// <summary>
+        /// Validates that the URL is a well-formed absolute URI with an allowed scheme (http or https only).
+        /// Rejects javascript:, data:, vbscript:, and all other non-HTTP(S) schemes to prevent XSS.
+        /// </summary>
+        /// <param name="url">The URL to validate</param>
+        /// <returns>The validated URL string</returns>
+        /// <exception cref="ArgumentException">Thrown when the URL is not valid or uses a disallowed scheme</exception>
+        private static string ValidateAndSanitizeUrl(string url)
+        {
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                throw new ArgumentException("URL cannot be null or empty", nameof(url));
+            }
+
+            if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
+            {
+                throw new ArgumentException("Please provide a valid url");
+            }
+
+            // Only allow http and https schemes - reject javascript:, data:, vbscript:, etc.
+            var scheme = uri.Scheme.ToLowerInvariant();
+            if (scheme != "http" && scheme != "https")
+            {
+                throw new ArgumentException(
+                    $"Only http and https URL schemes are allowed. The provided URL uses the '{uri.Scheme}' scheme.");
+            }
+
+            return url;
+        }
+
+        /// <summary>
+        /// Encodes a string for safe insertion into a JavaScript single-quoted string literal.
+        /// Escapes characters that could break out of the string context or introduce script injection.
+        /// </summary>
+        /// <param name="value">The string to encode</param>
+        /// <returns>The JavaScript-encoded string (without surrounding quotes)</returns>
+        private static string JavaScriptStringEncode(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return value;
+            }
+
+            var sb = new StringBuilder(value.Length);
+            foreach (var c in value)
+            {
+                switch (c)
+                {
+                    case '\\':
+                        sb.Append("\\\\");
+                        break;
+                    case '\'':
+                        sb.Append("\\'");
+                        break;
+                    case '"':
+                        sb.Append("\\\"");
+                        break;
+                    case '\n':
+                        sb.Append("\\n");
+                        break;
+                    case '\r':
+                        sb.Append("\\r");
+                        break;
+                    case '<':
+                        // Prevent </script> breakout within inline script blocks
+                        sb.Append("\\u003c");
+                        break;
+                    case '>':
+                        sb.Append("\\u003e");
+                        break;
+                    default:
+                        sb.Append(c);
+                        break;
+                }
+            }
+
+            return sb.ToString();
         }
         #endregion
     }

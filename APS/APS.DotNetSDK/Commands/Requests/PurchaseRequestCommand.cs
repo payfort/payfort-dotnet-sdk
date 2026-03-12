@@ -206,7 +206,7 @@ namespace APS.DotNetSDK.Commands.Requests
         public string AppPlugin => ".dotNETSDK";
 
         [JsonPropertyName("app_plugin_version")]
-        public string AppPluginVersion => "v2.1.0";
+        public string AppPluginVersion => "v2.1.1";
 
         [JsonPropertyName("app_ver")]
         public string AppVersion => Assembly.GetAssembly(typeof(RequestCommand)).GetName().Version.ToString();

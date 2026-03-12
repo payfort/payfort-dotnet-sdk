@@ -49,7 +49,7 @@ namespace APS.DotNetSDK.Tests.Web
                 "<input type='hidden' name='installments' value=\"STANDALONE\">" +
                 "<input type='hidden' name='app_programming' value=\".NET\">" +
                 "<input type='hidden' name='app_plugin' value=\".dotNETSDK\">" +
-                "<input type='hidden' name='app_plugin_version' value=\"v2.1.0\">" +
+                "<input type='hidden' name='app_plugin_version' value=\"v2.1.1\">" +
                 "<input type='hidden' name='app_ver' value=\"1.0.0.0\">" +
                 "<input type='hidden' name='app_framework' value=\".NET\">" +
                 "<input type='hidden' name='access_code' value=\"TestAccessCode\">" +
