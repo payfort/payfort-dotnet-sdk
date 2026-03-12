@@ -183,7 +183,7 @@ namespace APS.DotNetSDK.Tests.Commands.Requests
 
             //act
             var expectedResult = "{\"command\":\"AUTHORIZATION\",\"amount\":24.3,\"currency\":\"TestCurrency\",\"customer_email\":\"***\"," +
-                "\"app_programming\":\".NET\",\"app_plugin\":\".dotNETSDK\",\"app_plugin_version\":\"v2.1.0\",\"app_ver\":\"1.0.0.0\"," +
+                "\"app_programming\":\".NET\",\"app_plugin\":\".dotNETSDK\",\"app_plugin_version\":\"v2.1.1\",\"app_ver\":\"1.0.0.0\"," +
                 "\"app_framework\":\".NET\",\"access_code\":\"TestAccessCode\",\"merchant_identifier\":\"TestMerchantIdentifier\",\"merchant_reference\":\"TestMerchantReference\"," +
                 "\"language\":\"testlanguage\",\"signature\":\"TestSignature\"}";
 
